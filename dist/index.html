@@ -790,27 +790,8 @@ function renderMenu() {
 
   const params = new URLSearchParams(window.location.search);
   const activeCat = params.get('cat');
+  const showCat = grouped[activeCat] ? activeCat : categories[0];
 
-
-  const activeCat = new URLSearchParams(window.location.search).get('cat');
-
-
-  const activeCat = new URLSearchParams(window.location.search).get('cat');
-  const showCat = categories.includes(activeCat) ? activeCat : categories[0];
-  
-  // Clear existing content
-  menuSection.innerHTML = `
-    <div class="hero-section" id="home-hero">
-      <div class="hero-logo">Café Halal</div>
-      <p class="hero-tagline">Welcome to Café Halal – Fresh Middle Eastern Food Daily!</p>
-      <button id="view-menu" class="btn btn-primary">View Menu</button>
-    </div>
-    <div class="menu-header" id="menu-top">
-      <h1 class="menu-title">Menu</h1>
-      <p class="menu-subtitle">Select items to add to your order</p>
-    </div>
-  `;
-  
   // Update navigation
   const navContent = nav.querySelector('.nav-content');
   navContent.innerHTML = '<div class="nav-section-title">Categories</div>';
@@ -819,11 +800,8 @@ function renderMenu() {
     link.textContent = cat;
     link.href = `?cat=${encodeURIComponent(cat)}`;
     link.className = 'nav-link';
-    if (cat === activeCat) link.classList.add('active');
-
-    if (cat === activeCat) link.classList.add('active');
     if (cat === showCat) link.classList.add('active');
-    
+
     link.onclick = (e) => {
       e.preventDefault();
       window.location.href = `?cat=${encodeURIComponent(cat)}`;
@@ -847,8 +825,6 @@ function renderMenu() {
   }
 
   // Determine category to show
-  const showCat = grouped[activeCat] ? activeCat : categories[0];
-
   menuSection.innerHTML = `
     <div class="menu-header" id="menu-top">
       <h1 class="menu-title">${showCat}</h1>
@@ -870,7 +846,6 @@ function renderMenu() {
           <div class="item-description">${item.description}</div>
           <div class="item-price">$${item.price.toFixed(2)}</div>
         </div>
-      </div>
     `;
 
     card.addEventListener('click', () => {
@@ -936,7 +911,6 @@ function renderCart() {
         <div class="cart-item-info">
           <div class="cart-item-name">${item.name}</div>
           ${item.ingredients && item.ingredients.length ? `<div class="cart-item-extra">${item.ingredients.join(', ')}</div>` : ''}
-
           <div class="cart-item-controls">
             <button class="qty-btn" onclick="decreaseQty(${item.id})">−</button>
             <span class="cart-item-qty">${item.qty}</span>
