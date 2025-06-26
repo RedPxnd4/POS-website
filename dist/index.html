@@ -141,6 +141,24 @@
       font-size: 1rem;
     }
 
+    .hero-section {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .hero-logo {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      color: var(--primary);
+    }
+
+    .hero-tagline {
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
     .cat-section {
       margin-bottom: 3rem;
     }
@@ -339,6 +357,30 @@
       color: var(--accent);
     }
 
+    .cart-item-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+    }
+
+    .qty-btn {
+      width: 24px;
+      height: 24px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 600;
+      line-height: 1;
+    }
+
+    .cart-item-qty {
+      min-width: 20px;
+      text-align: center;
+    }
+
     .cart-summary {
       border-top: 2px solid var(--border);
       padding-top: 1rem;
@@ -352,6 +394,26 @@
       font-weight: 700;
       margin-bottom: 1rem;
       color: var(--text-primary);
+    }
+
+    .cart-total-items {
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-secondary);
+    }
+
+    .cart-inputs {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .cart-inputs input {
+      padding: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.95rem;
     }
 
     .btn {
@@ -424,7 +486,12 @@
   </nav>
 
   <section id="menu">
-    <div class="menu-header">
+    <div class="hero-section" id="home-hero">
+      <div class="hero-logo">Café Halal</div>
+      <p class="hero-tagline">Welcome to Café Halal – Fresh Middle Eastern Food Daily!</p>
+      <button id="view-menu" class="btn btn-primary">View Menu</button>
+    </div>
+    <div class="menu-header" id="menu-top">
       <h1 class="menu-title">Menu</h1>
       <p class="menu-subtitle">Select items to add to your order</p>
     </div>
@@ -446,7 +513,12 @@
           <span>Total:</span>
           <span id="total">$0.00</span>
         </div>
-        <button id="pay" class="btn btn-primary" disabled>Process Order</button>
+        <div id="total-items" class="cart-total-items">Total Items: 0</div>
+        <div class="cart-inputs">
+          <input id="cust-name" type="text" placeholder="Customer Name" />
+          <input id="cust-phone" type="tel" placeholder="Phone Number" />
+        </div>
+        <button id="pay" class="btn btn-primary" disabled>Mark Ready &amp; Print</button>
       </div>
     </div>
   </section>
@@ -564,7 +636,12 @@ function renderMenu() {
   
   // Clear existing content
   menuSection.innerHTML = `
-    <div class="menu-header">
+    <div class="hero-section" id="home-hero">
+      <div class="hero-logo">Café Halal</div>
+      <p class="hero-tagline">Welcome to Café Halal – Fresh Middle Eastern Food Daily!</p>
+      <button id="view-menu" class="btn btn-primary">View Menu</button>
+    </div>
+    <div class="menu-header" id="menu-top">
       <h1 class="menu-title">Menu</h1>
       <p class="menu-subtitle">Select items to add to your order</p>
     </div>
@@ -573,6 +650,10 @@ function renderMenu() {
   // Update navigation
   const navContent = nav.querySelector('.nav-content');
   navContent.innerHTML = '<div class="nav-section-title">Categories</div>';
+
+  document.getElementById('view-menu').onclick = () => {
+    document.getElementById('menu-top').scrollIntoView({ behavior: 'smooth' });
+  };
   
   categories.forEach((cat, idx) => {
     // Create navigation link
@@ -628,13 +709,32 @@ function renderMenu() {
 }
 
 function addToCart(item) {
-  cart.push({ ...item, id: Date.now() + Math.random() });
+  const existing = cart.find(i => i.name === item.name);
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({ ...item, id: Date.now() + Math.random(), qty: 1 });
+  }
   renderCart();
 }
 
-function removeFromCart(id) {
-  cart = cart.filter(item => item.id !== id);
-  renderCart();
+function increaseQty(id) {
+  const it = cart.find(i => i.id === id);
+  if (it) {
+    it.qty += 1;
+    renderCart();
+  }
+}
+
+function decreaseQty(id) {
+  const it = cart.find(i => i.id === id);
+  if (it) {
+    it.qty -= 1;
+    if (it.qty <= 0) {
+      cart = cart.filter(i => i.id !== id);
+    }
+    renderCart();
+  }
 }
 
 function renderCart() {
@@ -647,25 +747,31 @@ function renderCart() {
     `;
   } else {
     cartItemsEl.innerHTML = cart.map(item => `
-      <div class="cart-row" onclick="removeFromCart('${item.id}')">
+      <div class="cart-row">
         <div class="cart-item-info">
           <div class="cart-item-name">${item.name}</div>
-          <div class="cart-item-remove">Click to remove</div>
+          <div class="cart-item-controls">
+            <button class="qty-btn" onclick="decreaseQty('${item.id}')">−</button>
+            <span class="cart-item-qty">${item.qty}</span>
+            <button class="qty-btn" onclick="increaseQty('${item.id}')">+</button>
+          </div>
         </div>
-        <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+        <div class="cart-item-price">$${(item.price * item.qty).toFixed(2)}</div>
       </div>
     `).join('');
   }
   
-  const total = cart.reduce((sum, item) => sum + item.price, 0);
+  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
   totalEl.textContent = `$${total.toFixed(2)}`;
-  payBtn.disabled = cart.length === 0;
+  document.getElementById('total-items').textContent = `Total Items: ${totalItems}`;
+  payBtn.disabled = totalItems === 0;
 }
 
 payBtn.onclick = () => {
   if (cart.length > 0) {
-    console.log('Processing order:', cart);
-    alert(`Order processed successfully!\nTotal: $${cart.reduce((sum, item) => sum + item.price, 0).toFixed(2)}\nItems: ${cart.length}`);
+    console.log('Printing order:', cart);
+    window.print();
     cart = [];
     renderCart();
   }
