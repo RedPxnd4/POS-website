@@ -703,6 +703,8 @@ const modalImg = document.getElementById('modal-item-img');
 const modalIngredientsEl = document.getElementById('modal-ingredients');
 const modalNotes = document.getElementById('modal-notes');
 const modalAddBtn = document.getElementById('modal-add');
+const modalCloseBtn = document.getElementById('modal-close');
+modalCloseBtn.addEventListener("click", closeIngredientModal);
 let modalItem = null;
 
 const ingredientOptions = ["Lettuce", "Tomato", "White Sauce", "Hot Sauce", "Onions"];
