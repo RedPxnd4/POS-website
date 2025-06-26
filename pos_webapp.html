@@ -717,6 +717,43 @@ function finalizeAddToCart(item, ingredients = [], notes = '') {
   renderCart();
 }
 
+// Ingredient customization modal elements
+const overlay = document.getElementById('ingredient-overlay');
+const modal = document.getElementById('ingredient-modal');
+const modalName = document.getElementById('modal-item-name');
+const modalImg = document.getElementById('modal-item-img');
+const modalIngredientsEl = document.getElementById('modal-ingredients');
+const modalNotes = document.getElementById('modal-notes');
+const modalAddBtn = document.getElementById('modal-add');
+let modalItem = null;
+
+const ingredientOptions = ["Lettuce", "Tomato", "White Sauce", "Hot Sauce", "Onions"];
+
+function openIngredientModal(item) {
+  modalItem = item;
+  modalName.textContent = item.name;
+  modalImg.textContent = item.emoji || '';
+  modalNotes.value = '';
+  modalIngredientsEl.innerHTML = ingredientOptions
+    .map(ing => `<label><input type="checkbox" value="${ing}" checked> ${ing}</label>`)
+    .join('');
+  overlay.classList.remove('hidden');
+}
+
+function closeIngredientModal() {
+  overlay.classList.add('hidden');
+}
+
+function finalizeAddToCart(item, ingredients = [], notes = '') {
+  const existing = cart.find(i => i.name === item.name && JSON.stringify(i.ingredients || []) === JSON.stringify(ingredients) && (i.notes || '') === notes);
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({ ...item, ingredients, notes, id: Date.now() + Math.random(), qty: 1 });
+  }
+  renderCart();
+}
+
 // Group data by category
 function groupBy(arr, key) {
   return arr.reduce((acc, obj) => {
@@ -732,7 +769,26 @@ function renderMenu() {
   const grouped = groupBy(menuData, 'cat');
   const categories = Object.keys(grouped);
 
+
   const activeCat = new URLSearchParams(window.location.search).get('cat');
+
+
+  const activeCat = new URLSearchParams(window.location.search).get('cat');
+  const showCat = categories.includes(activeCat) ? activeCat : categories[0];
+  
+  // Clear existing content
+  menuSection.innerHTML = `
+    <div class="hero-section" id="home-hero">
+      <div class="hero-logo">Café Halal</div>
+      <p class="hero-tagline">Welcome to Café Halal – Fresh Middle Eastern Food Daily!</p>
+      <button id="view-menu" class="btn btn-primary">View Menu</button>
+    </div>
+    <div class="menu-header" id="menu-top">
+      <h1 class="menu-title">Menu</h1>
+      <p class="menu-subtitle">Select items to add to your order</p>
+    </div>
+  `;
+  
 
   // Update navigation
   const navContent = nav.querySelector('.nav-content');
@@ -742,7 +798,12 @@ function renderMenu() {
     link.textContent = cat;
     link.href = `?cat=${encodeURIComponent(cat)}`;
     link.className = 'nav-link';
+
     if (cat === activeCat) link.classList.add('active');
+
+    if (cat === showCat) link.classList.add('active');
+    
+
     link.onclick = (e) => {
       e.preventDefault();
       window.location.href = `?cat=${encodeURIComponent(cat)}`;
@@ -789,6 +850,7 @@ function renderMenu() {
           <div class="item-description">${item.description}</div>
           <div class="item-price">$${item.price.toFixed(2)}</div>
         </div>
+
       </div>
     `;
 
@@ -798,6 +860,18 @@ function renderMenu() {
       } else {
         openIngredientModal(item);
       }
+
+      `;
+      
+      card.addEventListener('click', () => {
+        if (item.cat === 'Drinks') {
+          finalizeAddToCart(item);
+        } else {
+          openIngredientModal(item);
+        }
+      });
+      grid.appendChild(card);
+
     });
     grid.appendChild(card);
   });
@@ -838,6 +912,7 @@ function renderCart() {
       </div>
     `;
   } else {
+
     cartEl.classList.remove('hidden');
     cartItemsEl.innerHTML = cart.map(item => `
       <div class="cart-row">
@@ -845,15 +920,33 @@ function renderCart() {
           <div class="cart-item-name">${item.name}</div>
           ${item.ingredients && item.ingredients.length ? `<div class="cart-item-extra">${item.ingredients.join(', ')}</div>` : ''}
           ${item.notes ? `<div class="cart-item-extra">Notes: ${item.notes}</div>` : ''}
+
+    cartItemsEl.innerHTML = '';
+    cart.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'cart-row';
+      row.innerHTML = `
+        <div class="cart-item-info">
+          <div class="cart-item-name">${item.name}</div>
+          ${item.ingredients && item.ingredients.length ? `<div class="cart-item-extra">${item.ingredients.join(', ')}</div>` : ''}
           <div class="cart-item-controls">
-            <button class="qty-btn" onclick="decreaseQty('${item.id}')">−</button>
+            <button class="qty-btn" onclick="decreaseQty(${item.id})">−</button>
             <span class="cart-item-qty">${item.qty}</span>
-            <button class="qty-btn" onclick="increaseQty('${item.id}')">+</button>
+            <button class="qty-btn" onclick="increaseQty(${item.id})">+</button>
           </div>
         </div>
         <div class="cart-item-price">$${(item.price * item.qty).toFixed(2)}</div>
-      </div>
-    `).join('');
+      `;
+
+      if (item.notes) {
+        const notesEl = document.createElement('div');
+        notesEl.className = 'cart-item-extra';
+        notesEl.textContent = `Notes: ${item.notes}`;
+        row.querySelector('.cart-item-info').insertBefore(notesEl, row.querySelector('.cart-item-controls'));
+      }
+
+      cartItemsEl.appendChild(row);
+    });
   }
 
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
