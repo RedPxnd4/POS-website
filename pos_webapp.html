@@ -620,6 +620,7 @@
           <input id="cust-phone" type="tel" placeholder="Phone Number" />
         </div>
         <button id="pay" class="btn btn-primary" disabled>Mark Ready & Print</button>
+        <button id="new-order" class="btn">Start New Order</button>
       </div>
     </div>
   </section>
@@ -729,6 +730,7 @@ const menuSection = document.getElementById('menu');
 const cartItemsEl = document.getElementById('cart-items');
 const totalEl = document.getElementById('total');
 const payBtn = document.getElementById('pay');
+const newOrderBtn = document.getElementById('new-order');
 const cartEl = document.getElementById('cart');
 const menuToggle = document.getElementById('menu-toggle');
 const cartToggle = document.getElementById('cart-toggle');
@@ -969,6 +971,13 @@ payBtn.onclick = () => {
   }
 };
 
+newOrderBtn?.addEventListener('click', () => {
+  localStorage.removeItem('cart');
+  cart = [];
+  cartEl.classList.add('hidden');
+  renderCart();
+});
+
 modalAddBtn.onclick = () => {
   const selected = Array.from(modalIngredientsEl.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
   finalizeAddToCart(modalItem, selected, modalNotes.value.trim());
@@ -981,6 +990,8 @@ overlay.addEventListener('click', e => {
 
 // Initialize the application
 renderMenu();
+localStorage.removeItem('cart');
+cart = [];
 renderCart();
 </script>
 </body>
