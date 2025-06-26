@@ -214,6 +214,7 @@
     .item-card:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-lg);
+      position: relative;
       border-color: var(--accent);
     }
 
@@ -428,9 +429,21 @@
       padding: 1.5rem;
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-lg);
+      position: relative;
       width: 90%;
       max-width: 400px;
     }
+    .modal-close {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: transparent;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+
 
     .modal-img {
       font-size: 2rem;
@@ -497,6 +510,7 @@
     .btn-primary:hover:not(:disabled) {
       transform: translateY(-1px);
       box-shadow: var(--shadow-lg);
+      position: relative;
     }
 
     .btn-primary:disabled {
@@ -575,6 +589,7 @@
 
   <div id="ingredient-overlay" class="modal-overlay hidden">
     <div class="modal" id="ingredient-modal">
+      <button id="modal-close" class="modal-close" aria-label="Close">&times;</button>
       <h3 id="modal-item-name"></h3>
       <div id="modal-item-img" class="modal-img"></div>
       <div class="modal-ingredients" id="modal-ingredients"></div>
@@ -725,6 +740,8 @@ const modalImg = document.getElementById('modal-item-img');
 const modalIngredientsEl = document.getElementById('modal-ingredients');
 const modalNotes = document.getElementById('modal-notes');
 const modalAddBtn = document.getElementById('modal-add');
+const modalCloseBtn = document.getElementById('modal-close');
+modalCloseBtn.addEventListener("click", closeIngredientModal);
 let modalItem = null;
 
 const ingredientOptions = ["Lettuce", "Tomato", "White Sauce", "Hot Sauce", "Onions"];
