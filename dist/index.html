@@ -678,12 +678,7 @@ const cartItemsEl = document.getElementById('cart-items');
 const totalEl = document.getElementById('total');
 const payBtn = document.getElementById('pay');
 const cartEl = document.getElementById('cart');
-let cart = [];
-
-const savedCart = JSON.parse(localStorage.getItem('cart'));
-if (Array.isArray(savedCart)) {
-  cart = savedCart;
-}
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 // Ingredient customization modal elements
 const overlay = document.getElementById('ingredient-overlay');
