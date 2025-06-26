@@ -788,6 +788,9 @@ function renderMenu() {
   const grouped = groupBy(menuData, 'cat');
   const categories = Object.keys(grouped);
 
+  const params = new URLSearchParams(window.location.search);
+  const activeCat = params.get('cat');
+  const showCat = grouped[activeCat] ? activeCat : categories[0];
 
   // Update navigation
   const navContent = nav.querySelector('.nav-content');
@@ -797,6 +800,7 @@ function renderMenu() {
     link.textContent = cat;
     link.href = `?cat=${encodeURIComponent(cat)}`;
     link.className = 'nav-link';
+    if (cat === showCat) link.classList.add('active');
 
     link.onclick = (e) => {
       e.preventDefault();
@@ -821,8 +825,6 @@ function renderMenu() {
   }
 
   // Determine category to show
-  const showCat = grouped[activeCat] ? activeCat : categories[0];
-
   menuSection.innerHTML = `
     <div class="menu-header" id="menu-top">
       <h1 class="menu-title">${showCat}</h1>
