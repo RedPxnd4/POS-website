@@ -732,8 +732,7 @@ function renderMenu() {
   const grouped = groupBy(menuData, 'cat');
   const categories = Object.keys(grouped);
 
-  const params = new URLSearchParams(window.location.search);
-  const activeCat = params.get('cat');
+  const activeCat = new URLSearchParams(window.location.search).get('cat');
 
   // Update navigation
   const navContent = nav.querySelector('.nav-content');
