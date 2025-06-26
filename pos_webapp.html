@@ -520,36 +520,73 @@
       box-shadow: var(--shadow-sm);
     }
 
+    /* ===== Mobile Header ===== */
+    #mobile-header {
+      display: none;
+    }
+
     /* ===== Responsive Design ===== */
     @media (max-width: 768px) {
       body {
         flex-direction: column;
       }
-      
+
+      #mobile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        background: var(--primary);
+        color: #fff;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      #mobile-header button {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        padding: 0.5rem 0.75rem;
+        border-radius: var(--radius);
+        font-weight: 600;
+      }
+
       #nav {
         width: 100%;
         height: auto;
         order: 2;
       }
-      
+
       #menu {
         order: 1;
         padding: 1rem;
       }
-      
+
       #cart {
         width: 100%;
         order: 3;
         max-height: 300px;
       }
-      
+
       .items-grid {
         grid-template-columns: 1fr;
+      }
+    }
+
+    @media (min-width: 769px) {
+      #mobile-header {
+        display: none;
       }
     }
   </style>
 </head>
 <body>
+  <header id="mobile-header">
+    <button id="menu-toggle">☰ Menu</button>
+    <span class="mobile-title">Café POS</span>
+    <button id="cart-toggle">Cart (<span id="cart-count">0</span>)</button>
+  </header>
   <nav id="nav">
     <div class="nav-header">
       <h1>Café POS</h1>
@@ -693,7 +730,23 @@ const cartItemsEl = document.getElementById('cart-items');
 const totalEl = document.getElementById('total');
 const payBtn = document.getElementById('pay');
 const cartEl = document.getElementById('cart');
+const menuToggle = document.getElementById('menu-toggle');
+const cartToggle = document.getElementById('cart-toggle');
+const cartCountEl = document.getElementById('cart-count');
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+if (window.innerWidth <= 768) {
+  nav.classList.add('hidden');
+  cartEl.classList.add('hidden');
+}
+
+menuToggle?.addEventListener('click', () => {
+  nav.classList.toggle('hidden');
+});
+
+cartToggle?.addEventListener('click', () => {
+  cartEl.classList.toggle('hidden');
+});
 
 // Ingredient customization modal elements
 const overlay = document.getElementById('ingredient-overlay');
@@ -935,6 +988,7 @@ function renderCart() {
   const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
   totalEl.textContent = `$${total.toFixed(2)}`;
   document.getElementById('total-items').textContent = `Total Items: ${totalItems}`;
+  if (cartCountEl) cartCountEl.textContent = totalItems;
   payBtn.disabled = totalItems === 0;
   localStorage.setItem('cart', JSON.stringify(cart));
 }
