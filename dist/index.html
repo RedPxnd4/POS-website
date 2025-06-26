@@ -409,6 +409,66 @@
       margin-bottom: 1rem;
     }
 
+    /* ===== Modal Styles ===== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal {
+      background: var(--bg-secondary);
+      padding: 1.5rem;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .modal-img {
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal h3 {
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+    }
+
+    .modal-ingredients {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .modal-notes {
+      width: 100%;
+      height: 60px;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      resize: vertical;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .cart-item-extra {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
     .cart-inputs input {
       padding: 0.5rem;
       border: 1px solid var(--border);
@@ -523,6 +583,16 @@
     </div>
   </section>
 
+  <div id="ingredient-overlay" class="modal-overlay hidden">
+    <div class="modal" id="ingredient-modal">
+      <h3 id="modal-item-name"></h3>
+      <div id="modal-item-img" class="modal-img"></div>
+      <div class="modal-ingredients" id="modal-ingredients"></div>
+      <textarea id="modal-notes" class="modal-notes" placeholder="Additional notes"></textarea>
+      <button id="modal-add" class="btn btn-primary">Add to Cart</button>
+    </div>
+  </div>
+
 <script>
 // ===== Enhanced Menu Data =====
 const menuData = [
@@ -619,6 +689,43 @@ const totalEl = document.getElementById('total');
 const payBtn = document.getElementById('pay');
 let cart = [];
 
+// Ingredient customization modal elements
+const overlay = document.getElementById('ingredient-overlay');
+const modal = document.getElementById('ingredient-modal');
+const modalName = document.getElementById('modal-item-name');
+const modalImg = document.getElementById('modal-item-img');
+const modalIngredientsEl = document.getElementById('modal-ingredients');
+const modalNotes = document.getElementById('modal-notes');
+const modalAddBtn = document.getElementById('modal-add');
+let modalItem = null;
+
+const ingredientOptions = ["Lettuce", "Tomato", "White Sauce", "Hot Sauce", "Onions"];
+
+function openIngredientModal(item) {
+  modalItem = item;
+  modalName.textContent = item.name;
+  modalImg.textContent = item.emoji || '';
+  modalNotes.value = '';
+  modalIngredientsEl.innerHTML = ingredientOptions
+    .map(ing => `<label><input type="checkbox" value="${ing}" checked> ${ing}</label>`)
+    .join('');
+  overlay.classList.remove('hidden');
+}
+
+function closeIngredientModal() {
+  overlay.classList.add('hidden');
+}
+
+function finalizeAddToCart(item, ingredients = [], notes = '') {
+  const existing = cart.find(i => i.name === item.name && JSON.stringify(i.ingredients || []) === JSON.stringify(ingredients) && (i.notes || '') === notes);
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({ ...item, ingredients, notes, id: Date.now() + Math.random(), qty: 1 });
+  }
+  renderCart();
+}
+
 // Group data by category
 function groupBy(arr, key) {
   return arr.reduce((acc, obj) => {
@@ -699,7 +806,13 @@ function renderMenu() {
         </div>
       `;
       
-      card.addEventListener('click', () => addToCart(item));
+      card.addEventListener('click', () => {
+        if (item.cat === 'Drinks') {
+          finalizeAddToCart(item);
+        } else {
+          openIngredientModal(item);
+        }
+      });
       grid.appendChild(card);
     });
     
@@ -709,13 +822,7 @@ function renderMenu() {
 }
 
 function addToCart(item) {
-  const existing = cart.find(i => i.name === item.name);
-  if (existing) {
-    existing.qty += 1;
-  } else {
-    cart.push({ ...item, id: Date.now() + Math.random(), qty: 1 });
-  }
-  renderCart();
+  finalizeAddToCart(item);
 }
 
 function increaseQty(id) {
@@ -750,6 +857,8 @@ function renderCart() {
       <div class="cart-row">
         <div class="cart-item-info">
           <div class="cart-item-name">${item.name}</div>
+          ${item.ingredients && item.ingredients.length ? `<div class="cart-item-extra">${item.ingredients.join(', ')}</div>` : ''}
+          ${item.notes ? `<div class="cart-item-extra">Notes: ${item.notes}</div>` : ''}
           <div class="cart-item-controls">
             <button class="qty-btn" onclick="decreaseQty('${item.id}')">−</button>
             <span class="cart-item-qty">${item.qty}</span>
@@ -776,6 +885,16 @@ payBtn.onclick = () => {
     renderCart();
   }
 };
+
+modalAddBtn.onclick = () => {
+  const selected = Array.from(modalIngredientsEl.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
+  finalizeAddToCart(modalItem, selected, modalNotes.value.trim());
+  closeIngredientModal();
+};
+
+overlay.addEventListener('click', e => {
+  if (e.target === overlay) closeIngredientModal();
+});
 
 // Initialize the application
 renderMenu();
