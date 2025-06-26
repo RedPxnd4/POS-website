@@ -740,6 +740,8 @@ function groupBy(arr, key) {
 function renderMenu() {
   const grouped = groupBy(menuData, 'cat');
   const categories = Object.keys(grouped);
+  const activeCat = new URLSearchParams(window.location.search).get('cat');
+  const showCat = categories.includes(activeCat) ? activeCat : categories[0];
   
   // Clear existing content
   menuSection.innerHTML = `
@@ -768,7 +770,7 @@ function renderMenu() {
     link.textContent = cat;
     link.href = `#cat-${idx}`;
     link.className = 'nav-link';
-    if (idx === 0) link.classList.add('active');
+    if (cat === showCat) link.classList.add('active');
     
     link.onclick = (e) => {
       e.preventDefault();
