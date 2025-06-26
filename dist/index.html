@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Café POS – Halal Xtreme‑style Menu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1f2937;
+      --primary-light: #374151;
+      --accent: #f59e0b;
+      --accent-hover: #d97706;
+      --success: #10b981;
+      --danger: #ef4444;
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --text-primary: #111827;
+      --text-secondary: #6b7280;
+      --text-muted: #9ca3af;
+      --border: #e5e7eb;
+      --border-light: #f3f4f6;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --radius: 8px;
+      --radius-lg: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ===== Navigation Sidebar ===== */
+    #nav {
+      width: 240px;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-header {
+      padding: 1.5rem 1rem;
+      border-bottom: 1px solid var(--border-light);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    }
+
+    .nav-header h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: white;
+      text-align: center;
+      letter-spacing: -0.025em;
+    }
+
+    .nav-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+    }
+
+    .nav-section-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      padding: 0 0.75rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem;
+      border-radius: var(--radius);
+      margin-bottom: 0.25rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+
+    .nav-link:hover {
+      background: var(--border-light);
+      color: var(--text-primary);
+      transform: translateX(2px);
+    }
+
+    .nav-link.active {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .nav-link-icon {
+      width: 20px;
+      height: 20px;
+      margin-right: 0.75rem;
+      opacity: 0.7;
+    }
+
+    /* ===== Main Menu Area ===== */
+    #menu {
+      flex: 1;
+      overflow-y: auto;
+      padding: 2rem;
+      background: var(--bg-primary);
+    }
+
+    .menu-header {
+      margin-bottom: 2rem;
+    }
+
+    .menu-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.025em;
+    }
+
+    .menu-subtitle {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    .cat-section {
+      margin-bottom: 3rem;
+    }
+
+    .cat-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .cat-title::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+      border-radius: 2px;
+    }
+
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .item-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .item-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-hover) 100%);
+      transform: scaleX(0);
+      transition: transform 0.2s ease;
+    }
+
+    .item-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--accent);
+    }
+
+    .item-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .item-content {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .item-img {
+      width: 80px;
+      height: 80px;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: var(--text-muted);
+    }
+
+    .item-info {
+      flex: 1;
+    }
+
+    .item-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .item-description {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+      line-height: 1.4;
+    }
+
+    .item-price {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--accent);
+    }
+
+    /* ===== Cart Sidebar ===== */
+    #cart {
+      width: 320px;
+      background: var(--bg-secondary);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .cart-header {
+      padding: 1.5rem 1rem;
+      border-bottom: 1px solid var(--border-light);
+      background: var(--primary);
+    }
+
+    .cart-header h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: white;
+      text-align: center;
+      letter-spacing: -0.025em;
+    }
+
+    .cart-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+    }
+
+    .cart-items {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+    }
+
+    .cart-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 200px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .cart-empty-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .cart-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem;
+      border-radius: var(--radius);
+      margin-bottom: 0.5rem;
+      background: var(--border-light);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border: 1px solid transparent;
+    }
+
+    .cart-row:hover {
+      background: #fee2e2;
+      border-color: var(--danger);
+      transform: translateX(-2px);
+    }
+
+    .cart-item-info {
+      flex: 1;
+    }
+
+    .cart-item-name {
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .cart-item-remove {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .cart-item-price {
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .cart-summary {
+      border-top: 2px solid var(--border);
+      padding-top: 1rem;
+    }
+
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .btn {
+      padding: 0.875rem 1.5rem;
+      border: none;
+      border-radius: var(--radius);
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: center;
+      letter-spacing: 0.025em;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ===== Responsive Design ===== */
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+      
+      #nav {
+        width: 100%;
+        height: auto;
+        order: 2;
+      }
+      
+      #menu {
+        order: 1;
+        padding: 1rem;
+      }
+      
+      #cart {
+        width: 100%;
+        order: 3;
+        max-height: 300px;
+      }
+      
+      .items-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav id="nav">
+    <div class="nav-header">
+      <h1>Café POS</h1>
+    </div>
+    <div class="nav-content">
+      <div class="nav-section-title">Categories</div>
+    </div>
+  </nav>
+
+  <section id="menu">
+    <div class="menu-header">
+      <h1 class="menu-title">Menu</h1>
+      <p class="menu-subtitle">Select items to add to your order</p>
+    </div>
+  </section>
+
+  <section id="cart">
+    <div class="cart-header">
+      <h2>Current Order</h2>
+    </div>
+    <div class="cart-content">
+      <div class="cart-items" id="cart-items">
+        <div class="cart-empty">
+          <div class="cart-empty-icon">🛒</div>
+          <p>No items in cart</p>
+        </div>
+      </div>
+      <div class="cart-summary">
+        <div class="cart-total">
+          <span>Total:</span>
+          <span id="total">$0.00</span>
+        </div>
+        <button id="pay" class="btn btn-primary" disabled>Process Order</button>
+      </div>
+    </div>
+  </section>
+
+<script>
+// ===== Enhanced Menu Data =====
+const menuData = [
+  {
+    cat: "Appetizers",
+    name: "Hummus & Pita",
+    price: 6.99,
+    description: "Creamy hummus served with warm pita bread",
+    emoji: "🥙"
+  },
+  {
+    cat: "Appetizers",
+    name: "Falafel (6pc)",
+    price: 5.99,
+    description: "Crispy chickpea fritters with tahini sauce",
+    emoji: "🧆"
+  },
+  {
+    cat: "Appetizers",
+    name: "Stuffed Grape Leaves",
+    price: 7.49,
+    description: "Rice-stuffed grape leaves with herbs",
+    emoji: "🍃"
+  },
+  {
+    cat: "Platters",
+    name: "Chicken over Rice",
+    price: 11.99,
+    description: "Grilled chicken over seasoned basmati rice",
+    emoji: "🍗"
+  },
+  {
+    cat: "Platters",
+    name: "Gyro Mix Platter",
+    price: 12.99,
+    description: "Mixed lamb and chicken gyro with rice and salad",
+    emoji: "🥩"
+  },
+  {
+    cat: "Platters",
+    name: "Lamb Kabob Platter",
+    price: 14.99,
+    description: "Tender lamb kabobs with rice and grilled vegetables",
+    emoji: "🍖"
+  },
+  {
+    cat: "Wraps",
+    name: "Lamb Gyro Wrap",
+    price: 8.49,
+    description: "Sliced lamb gyro in warm pita with vegetables",
+    emoji: "🌯"
+  },
+  {
+    cat: "Wraps",
+    name: "Chicken Shawarma Wrap",
+    price: 8.49,
+    description: "Marinated chicken shawarma with garlic sauce",
+    emoji: "🌮"
+  },
+  {
+    cat: "Wraps",
+    name: "Falafel Wrap",
+    price: 7.99,
+    description: "Crispy falafel with fresh vegetables and tahini",
+    emoji: "🥙"
+  },
+  {
+    cat: "Drinks",
+    name: "Mint Lemonade",
+    price: 3.50,
+    description: "Fresh mint lemonade with a hint of rose water",
+    emoji: "🍋"
+  },
+  {
+    cat: "Drinks",
+    name: "Mango Lassi",
+    price: 4.00,
+    description: "Creamy yogurt drink blended with mango",
+    emoji: "🥭"
+  },
+  {
+    cat: "Drinks",
+    name: "Turkish Coffee",
+    price: 3.25,
+    description: "Traditional Turkish coffee served with delight",
+    emoji: "☕"
+  }
+];
+
+const nav = document.getElementById('nav');
+const menuSection = document.getElementById('menu');
+const cartItemsEl = document.getElementById('cart-items');
+const totalEl = document.getElementById('total');
+const payBtn = document.getElementById('pay');
+let cart = [];
+
+// Group data by category
+function groupBy(arr, key) {
+  return arr.reduce((acc, obj) => {
+    const group = obj[key];
+    if (!acc[group]) acc[group] = [];
+    acc[group].push(obj);
+    return acc;
+  }, {});
+}
+
+// Render navigation and menu
+function renderMenu() {
+  const grouped = groupBy(menuData, 'cat');
+  const categories = Object.keys(grouped);
+  
+  // Clear existing content
+  menuSection.innerHTML = `
+    <div class="menu-header">
+      <h1 class="menu-title">Menu</h1>
+      <p class="menu-subtitle">Select items to add to your order</p>
+    </div>
+  `;
+  
+  // Update navigation
+  const navContent = nav.querySelector('.nav-content');
+  navContent.innerHTML = '<div class="nav-section-title">Categories</div>';
+  
+  categories.forEach((cat, idx) => {
+    // Create navigation link
+    const link = document.createElement('a');
+    link.textContent = cat;
+    link.href = `#cat-${idx}`;
+    link.className = 'nav-link';
+    if (idx === 0) link.classList.add('active');
+    
+    link.onclick = (e) => {
+      e.preventDefault();
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+      document.getElementById(`cat-${idx}`).scrollIntoView({ behavior: 'smooth' });
+    };
+    
+    navContent.appendChild(link);
+    
+    // Create menu section
+    const section = document.createElement('div');
+    section.className = 'cat-section';
+    section.id = `cat-${idx}`;
+    
+    const title = document.createElement('div');
+    title.className = 'cat-title';
+    title.textContent = cat;
+    section.appendChild(title);
+    
+    const grid = document.createElement('div');
+    grid.className = 'items-grid';
+    
+    grouped[cat].forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'item-card';
+      card.innerHTML = `
+        <div class="item-content">
+          <div class="item-img">${item.emoji}</div>
+          <div class="item-info">
+            <div class="item-name">${item.name}</div>
+            <div class="item-description">${item.description}</div>
+            <div class="item-price">$${item.price.toFixed(2)}</div>
+          </div>
+        </div>
+      `;
+      
+      card.addEventListener('click', () => addToCart(item));
+      grid.appendChild(card);
+    });
+    
+    section.appendChild(grid);
+    menuSection.appendChild(section);
+  });
+}
+
+function addToCart(item) {
+  cart.push({ ...item, id: Date.now() + Math.random() });
+  renderCart();
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(item => item.id !== id);
+  renderCart();
+}
+
+function renderCart() {
+  if (cart.length === 0) {
+    cartItemsEl.innerHTML = `
+      <div class="cart-empty">
+        <div class="cart-empty-icon">🛒</div>
+        <p>No items in cart</p>
+      </div>
+    `;
+  } else {
+    cartItemsEl.innerHTML = cart.map(item => `
+      <div class="cart-row" onclick="removeFromCart('${item.id}')">
+        <div class="cart-item-info">
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-remove">Click to remove</div>
+        </div>
+        <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+      </div>
+    `).join('');
+  }
+  
+  const total = cart.reduce((sum, item) => sum + item.price, 0);
+  totalEl.textContent = `$${total.toFixed(2)}`;
+  payBtn.disabled = cart.length === 0;
+}
+
+payBtn.onclick = () => {
+  if (cart.length > 0) {
+    console.log('Processing order:', cart);
+    alert(`Order processed successfully!\nTotal: $${cart.reduce((sum, item) => sum + item.price, 0).toFixed(2)}\nItems: ${cart.length}`);
+    cart = [];
+    renderCart();
+  }
+};
+
+// Initialize the application
+renderMenu();
+renderCart();
+</script>
+</body>
+</html>

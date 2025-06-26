@@ -1,0 +1,16 @@
+{
+  "name": "cafe-pos-webapp",
+  "version": "1.0.0",
+  "description": "A modern café POS system with halal menu",
+  "main": "index.html",
+  "scripts": {
+    "build": "cp pos_webapp.html dist/index.html && mkdir -p dist",
+    "dev": "python3 -m http.server 3000",
+    "start": "python3 -m http.server 3000"
+  },
+  "keywords": ["pos", "cafe", "restaurant", "halal"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}
