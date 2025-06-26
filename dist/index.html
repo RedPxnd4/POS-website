@@ -786,6 +786,9 @@ function renderMenu() {
   const grouped = groupBy(menuData, 'cat');
   const categories = Object.keys(grouped);
 
+  const params = new URLSearchParams(window.location.search);
+  const activeCat = params.get('cat');
+
 
   const activeCat = new URLSearchParams(window.location.search).get('cat');
 
@@ -814,9 +817,9 @@ function renderMenu() {
     link.textContent = cat;
     link.href = `?cat=${encodeURIComponent(cat)}`;
     link.className = 'nav-link';
+    if (cat === activeCat) link.classList.add('active');
 
     if (cat === activeCat) link.classList.add('active');
-=======
     if (cat === showCat) link.classList.add('active');
     
     link.onclick = (e) => {
@@ -865,7 +868,6 @@ function renderMenu() {
           <div class="item-description">${item.description}</div>
           <div class="item-price">$${item.price.toFixed(2)}</div>
         </div>
-
       </div>
     `;
 
@@ -875,18 +877,6 @@ function renderMenu() {
       } else {
         openIngredientModal(item);
       }
-
-      `;
-      
-      card.addEventListener('click', () => {
-        if (item.cat === 'Drinks') {
-          finalizeAddToCart(item);
-        } else {
-          openIngredientModal(item);
-        }
-      });
-      grid.appendChild(card);
-
     });
     grid.appendChild(card);
   });
