@@ -214,6 +214,7 @@
     .item-card:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-lg);
+      position: relative;
       border-color: var(--accent);
     }
 
@@ -428,9 +429,21 @@
       padding: 1.5rem;
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-lg);
+      position: relative;
       width: 90%;
       max-width: 400px;
     }
+    .modal-close {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: transparent;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+
 
     .modal-img {
       font-size: 2rem;
@@ -497,6 +510,7 @@
     .btn-primary:hover:not(:disabled) {
       transform: translateY(-1px);
       box-shadow: var(--shadow-lg);
+      position: relative;
     }
 
     .btn-primary:disabled {
@@ -545,19 +559,9 @@
     </div>
   </nav>
 
-  <section id="menu">
-    <div class="hero-section" id="home-hero">
-      <div class="hero-logo">Café Halal</div>
-      <p class="hero-tagline">Welcome to Café Halal – Fresh Middle Eastern Food Daily!</p>
-      <button id="view-menu" class="btn btn-primary">View Menu</button>
-    </div>
-    <div class="menu-header" id="menu-top">
-      <h1 class="menu-title">Menu</h1>
-      <p class="menu-subtitle">Select items to add to your order</p>
-    </div>
-  </section>
+  <section id="menu"></section>
 
-  <section id="cart">
+  <section id="cart" class="hidden">
     <div class="cart-header">
       <h2>Current Order</h2>
     </div>
@@ -585,6 +589,7 @@
 
   <div id="ingredient-overlay" class="modal-overlay hidden">
     <div class="modal" id="ingredient-modal">
+      <button id="modal-close" class="modal-close" aria-label="Close">&times;</button>
       <h3 id="modal-item-name"></h3>
       <div id="modal-item-img" class="modal-img"></div>
       <div class="modal-ingredients" id="modal-ingredients"></div>
@@ -687,7 +692,8 @@ const menuSection = document.getElementById('menu');
 const cartItemsEl = document.getElementById('cart-items');
 const totalEl = document.getElementById('total');
 const payBtn = document.getElementById('pay');
-let cart = [];
+const cartEl = document.getElementById('cart');
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 // Ingredient customization modal elements
 const overlay = document.getElementById('ingredient-overlay');
@@ -697,6 +703,45 @@ const modalImg = document.getElementById('modal-item-img');
 const modalIngredientsEl = document.getElementById('modal-ingredients');
 const modalNotes = document.getElementById('modal-notes');
 const modalAddBtn = document.getElementById('modal-add');
+let modalItem = null;
+
+const ingredientOptions = ["Lettuce", "Tomato", "White Sauce", "Hot Sauce", "Onions"];
+
+function openIngredientModal(item) {
+  modalItem = item;
+  modalName.textContent = item.name;
+  modalImg.textContent = item.emoji || '';
+  modalNotes.value = '';
+  modalIngredientsEl.innerHTML = ingredientOptions
+    .map(ing => `<label><input type="checkbox" value="${ing}" checked> ${ing}</label>`)
+    .join('');
+  overlay.classList.remove('hidden');
+}
+
+function closeIngredientModal() {
+  overlay.classList.add('hidden');
+}
+
+function finalizeAddToCart(item, ingredients = [], notes = '') {
+  const existing = cart.find(i => i.name === item.name && JSON.stringify(i.ingredients || []) === JSON.stringify(ingredients) && (i.notes || '') === notes);
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({ ...item, ingredients, notes, id: Date.now() + Math.random(), qty: 1 });
+  }
+  renderCart();
+}
+
+// Ingredient customization modal elements
+const overlay = document.getElementById('ingredient-overlay');
+const modal = document.getElementById('ingredient-modal');
+const modalName = document.getElementById('modal-item-name');
+const modalImg = document.getElementById('modal-item-img');
+const modalIngredientsEl = document.getElementById('modal-ingredients');
+const modalNotes = document.getElementById('modal-notes');
+const modalAddBtn = document.getElementById('modal-add');
+const modalCloseBtn = document.getElementById('modal-close');
+modalCloseBtn.addEventListener("click", closeIngredientModal);
 let modalItem = null;
 
 const ingredientOptions = ["Lettuce", "Tomato", "White Sauce", "Hot Sauce", "Onions"];
@@ -744,6 +789,26 @@ function renderMenu() {
   const params = new URLSearchParams(window.location.search);
   const activeCat = params.get('cat');
 
+
+  const activeCat = new URLSearchParams(window.location.search).get('cat');
+
+
+  const activeCat = new URLSearchParams(window.location.search).get('cat');
+  const showCat = categories.includes(activeCat) ? activeCat : categories[0];
+  
+  // Clear existing content
+  menuSection.innerHTML = `
+    <div class="hero-section" id="home-hero">
+      <div class="hero-logo">Café Halal</div>
+      <p class="hero-tagline">Welcome to Café Halal – Fresh Middle Eastern Food Daily!</p>
+      <button id="view-menu" class="btn btn-primary">View Menu</button>
+    </div>
+    <div class="menu-header" id="menu-top">
+      <h1 class="menu-title">Menu</h1>
+      <p class="menu-subtitle">Select items to add to your order</p>
+    </div>
+  `;
+  
   // Update navigation
   const navContent = nav.querySelector('.nav-content');
   navContent.innerHTML = '<div class="nav-section-title">Categories</div>';
@@ -753,6 +818,10 @@ function renderMenu() {
     link.href = `?cat=${encodeURIComponent(cat)}`;
     link.className = 'nav-link';
     if (cat === activeCat) link.classList.add('active');
+
+    if (cat === activeCat) link.classList.add('active');
+    if (cat === showCat) link.classList.add('active');
+    
     link.onclick = (e) => {
       e.preventDefault();
       window.location.href = `?cat=${encodeURIComponent(cat)}`;
@@ -840,6 +909,7 @@ function decreaseQty(id) {
 
 function renderCart() {
   if (cart.length === 0) {
+    cartEl.classList.add('hidden');
     cartItemsEl.innerHTML = `
       <div class="cart-empty">
         <div class="cart-empty-icon">🛒</div>
@@ -847,33 +917,55 @@ function renderCart() {
       </div>
     `;
   } else {
+
+    cartEl.classList.remove('hidden');
     cartItemsEl.innerHTML = cart.map(item => `
       <div class="cart-row">
         <div class="cart-item-info">
           <div class="cart-item-name">${item.name}</div>
           ${item.ingredients && item.ingredients.length ? `<div class="cart-item-extra">${item.ingredients.join(', ')}</div>` : ''}
           ${item.notes ? `<div class="cart-item-extra">Notes: ${item.notes}</div>` : ''}
+
+    cartItemsEl.innerHTML = '';
+    cart.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'cart-row';
+      row.innerHTML = `
+        <div class="cart-item-info">
+          <div class="cart-item-name">${item.name}</div>
+          ${item.ingredients && item.ingredients.length ? `<div class="cart-item-extra">${item.ingredients.join(', ')}</div>` : ''}
+
           <div class="cart-item-controls">
-            <button class="qty-btn" onclick="decreaseQty('${item.id}')">−</button>
+            <button class="qty-btn" onclick="decreaseQty(${item.id})">−</button>
             <span class="cart-item-qty">${item.qty}</span>
-            <button class="qty-btn" onclick="increaseQty('${item.id}')">+</button>
+            <button class="qty-btn" onclick="increaseQty(${item.id})">+</button>
           </div>
         </div>
         <div class="cart-item-price">$${(item.price * item.qty).toFixed(2)}</div>
-      </div>
-    `).join('');
+      `;
+
+      if (item.notes) {
+        const notesEl = document.createElement('div');
+        notesEl.className = 'cart-item-extra';
+        notesEl.textContent = `Notes: ${item.notes}`;
+        row.querySelector('.cart-item-info').insertBefore(notesEl, row.querySelector('.cart-item-controls'));
+      }
+
+      cartItemsEl.appendChild(row);
+    });
   }
-  
+
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
   totalEl.textContent = `$${total.toFixed(2)}`;
   document.getElementById('total-items').textContent = `Total Items: ${totalItems}`;
   payBtn.disabled = totalItems === 0;
+  localStorage.setItem('cart', JSON.stringify(cart));
 }
 
 payBtn.onclick = () => {
   if (cart.length > 0) {
-    console.log('Printing order:', cart);
+    // console.log('Printing order:', cart);
     window.print();
     cart = [];
     renderCart();
