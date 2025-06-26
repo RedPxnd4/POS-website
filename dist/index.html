@@ -545,19 +545,9 @@
     </div>
   </nav>
 
-  <section id="menu">
-    <div class="hero-section" id="home-hero">
-      <div class="hero-logo">Café Halal</div>
-      <p class="hero-tagline">Welcome to Café Halal – Fresh Middle Eastern Food Daily!</p>
-      <button id="view-menu" class="btn btn-primary">View Menu</button>
-    </div>
-    <div class="menu-header" id="menu-top">
-      <h1 class="menu-title">Menu</h1>
-      <p class="menu-subtitle">Select items to add to your order</p>
-    </div>
-  </section>
+  <section id="menu"></section>
 
-  <section id="cart">
+  <section id="cart" class="hidden">
     <div class="cart-header">
       <h2>Current Order</h2>
     </div>
@@ -687,7 +677,45 @@ const menuSection = document.getElementById('menu');
 const cartItemsEl = document.getElementById('cart-items');
 const totalEl = document.getElementById('total');
 const payBtn = document.getElementById('pay');
-let cart = [];
+const cartEl = document.getElementById('cart');
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+// Ingredient customization modal elements
+const overlay = document.getElementById('ingredient-overlay');
+const modal = document.getElementById('ingredient-modal');
+const modalName = document.getElementById('modal-item-name');
+const modalImg = document.getElementById('modal-item-img');
+const modalIngredientsEl = document.getElementById('modal-ingredients');
+const modalNotes = document.getElementById('modal-notes');
+const modalAddBtn = document.getElementById('modal-add');
+let modalItem = null;
+
+const ingredientOptions = ["Lettuce", "Tomato", "White Sauce", "Hot Sauce", "Onions"];
+
+function openIngredientModal(item) {
+  modalItem = item;
+  modalName.textContent = item.name;
+  modalImg.textContent = item.emoji || '';
+  modalNotes.value = '';
+  modalIngredientsEl.innerHTML = ingredientOptions
+    .map(ing => `<label><input type="checkbox" value="${ing}" checked> ${ing}</label>`)
+    .join('');
+  overlay.classList.remove('hidden');
+}
+
+function closeIngredientModal() {
+  overlay.classList.add('hidden');
+}
+
+function finalizeAddToCart(item, ingredients = [], notes = '') {
+  const existing = cart.find(i => i.name === item.name && JSON.stringify(i.ingredients || []) === JSON.stringify(ingredients) && (i.notes || '') === notes);
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({ ...item, ingredients, notes, id: Date.now() + Math.random(), qty: 1 });
+  }
+  renderCart();
+}
 
 // Ingredient customization modal elements
 const overlay = document.getElementById('ingredient-overlay');
@@ -740,6 +768,11 @@ function groupBy(arr, key) {
 function renderMenu() {
   const grouped = groupBy(menuData, 'cat');
   const categories = Object.keys(grouped);
+
+
+  const activeCat = new URLSearchParams(window.location.search).get('cat');
+
+
   const activeCat = new URLSearchParams(window.location.search).get('cat');
   const showCat = categories.includes(activeCat) ? activeCat : categories[0];
   
@@ -759,53 +792,73 @@ function renderMenu() {
   // Update navigation
   const navContent = nav.querySelector('.nav-content');
   navContent.innerHTML = '<div class="nav-section-title">Categories</div>';
-
-  document.getElementById('view-menu').onclick = () => {
-    document.getElementById('menu-top').scrollIntoView({ behavior: 'smooth' });
-  };
-  
-  categories.forEach((cat, idx) => {
-    // Create navigation link
+  categories.forEach(cat => {
     const link = document.createElement('a');
     link.textContent = cat;
-    link.href = `#cat-${idx}`;
+    link.href = `?cat=${encodeURIComponent(cat)}`;
     link.className = 'nav-link';
+
+    if (cat === activeCat) link.classList.add('active');
+=======
     if (cat === showCat) link.classList.add('active');
     
     link.onclick = (e) => {
       e.preventDefault();
-      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-      link.classList.add('active');
-      document.getElementById(`cat-${idx}`).scrollIntoView({ behavior: 'smooth' });
+      window.location.href = `?cat=${encodeURIComponent(cat)}`;
     };
-    
     navContent.appendChild(link);
-    
-    // Create menu section
-    const section = document.createElement('div');
-    section.className = 'cat-section';
-    section.id = `cat-${idx}`;
-    
-    const title = document.createElement('div');
-    title.className = 'cat-title';
-    title.textContent = cat;
-    section.appendChild(title);
-    
-    const grid = document.createElement('div');
-    grid.className = 'items-grid';
-    
-    grouped[cat].forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'item-card';
-      card.innerHTML = `
-        <div class="item-content">
-          <div class="item-img">${item.emoji}</div>
-          <div class="item-info">
-            <div class="item-name">${item.name}</div>
-            <div class="item-description">${item.description}</div>
-            <div class="item-price">$${item.price.toFixed(2)}</div>
-          </div>
+  });
+
+  // Home view when no category parameter
+  if (!activeCat) {
+    menuSection.innerHTML = `
+      <div class="hero-section" id="home-hero">
+        <div class="hero-logo">Café Halal</div>
+        <p class="hero-tagline">Welcome to Café Halal – Fresh Middle Eastern Food Daily!</p>
+        <button id="view-menu" class="btn btn-primary">View Menu</button>
+      </div>
+    `;
+    document.getElementById('view-menu').onclick = () => {
+      window.location.href = `?cat=${encodeURIComponent(categories[0])}`;
+    };
+    return;
+  }
+
+  // Determine category to show
+  const showCat = grouped[activeCat] ? activeCat : categories[0];
+
+  menuSection.innerHTML = `
+    <div class="menu-header" id="menu-top">
+      <h1 class="menu-title">${showCat}</h1>
+      <p class="menu-subtitle">Select items to add to your order</p>
+    </div>
+  `;
+
+  const grid = document.createElement('div');
+  grid.className = 'items-grid';
+
+  grouped[showCat].forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'item-card';
+    card.innerHTML = `
+      <div class="item-content">
+        <div class="item-img">${item.emoji}</div>
+        <div class="item-info">
+          <div class="item-name">${item.name}</div>
+          <div class="item-description">${item.description}</div>
+          <div class="item-price">$${item.price.toFixed(2)}</div>
         </div>
+
+      </div>
+    `;
+
+    card.addEventListener('click', () => {
+      if (item.cat === 'Drinks') {
+        finalizeAddToCart(item);
+      } else {
+        openIngredientModal(item);
+      }
+
       `;
       
       card.addEventListener('click', () => {
@@ -816,11 +869,12 @@ function renderMenu() {
         }
       });
       grid.appendChild(card);
+
     });
-    
-    section.appendChild(grid);
-    menuSection.appendChild(section);
+    grid.appendChild(card);
   });
+
+  menuSection.appendChild(grid);
 }
 
 function addToCart(item) {
@@ -848,6 +902,7 @@ function decreaseQty(id) {
 
 function renderCart() {
   if (cart.length === 0) {
+    cartEl.classList.add('hidden');
     cartItemsEl.innerHTML = `
       <div class="cart-empty">
         <div class="cart-empty-icon">🛒</div>
@@ -855,6 +910,15 @@ function renderCart() {
       </div>
     `;
   } else {
+
+    cartEl.classList.remove('hidden');
+    cartItemsEl.innerHTML = cart.map(item => `
+      <div class="cart-row">
+        <div class="cart-item-info">
+          <div class="cart-item-name">${item.name}</div>
+          ${item.ingredients && item.ingredients.length ? `<div class="cart-item-extra">${item.ingredients.join(', ')}</div>` : ''}
+          ${item.notes ? `<div class="cart-item-extra">Notes: ${item.notes}</div>` : ''}
+
     cartItemsEl.innerHTML = '';
     cart.forEach(item => {
       const row = document.createElement('div');
@@ -863,6 +927,7 @@ function renderCart() {
         <div class="cart-item-info">
           <div class="cart-item-name">${item.name}</div>
           ${item.ingredients && item.ingredients.length ? `<div class="cart-item-extra">${item.ingredients.join(', ')}</div>` : ''}
+
           <div class="cart-item-controls">
             <button class="qty-btn" onclick="decreaseQty(${item.id})">−</button>
             <span class="cart-item-qty">${item.qty}</span>
@@ -882,12 +947,13 @@ function renderCart() {
       cartItemsEl.appendChild(row);
     });
   }
-  
+
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
   totalEl.textContent = `$${total.toFixed(2)}`;
   document.getElementById('total-items').textContent = `Total Items: ${totalItems}`;
   payBtn.disabled = totalItems === 0;
+  localStorage.setItem('cart', JSON.stringify(cart));
 }
 
 payBtn.onclick = () => {
