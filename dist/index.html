@@ -853,12 +853,14 @@ function renderCart() {
       </div>
     `;
   } else {
-    cartItemsEl.innerHTML = cart.map(item => `
-      <div class="cart-row">
+    cartItemsEl.innerHTML = '';
+    cart.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'cart-row';
+      row.innerHTML = `
         <div class="cart-item-info">
           <div class="cart-item-name">${item.name}</div>
           ${item.ingredients && item.ingredients.length ? `<div class="cart-item-extra">${item.ingredients.join(', ')}</div>` : ''}
-          ${item.notes ? `<div class="cart-item-extra">Notes: ${item.notes}</div>` : ''}
           <div class="cart-item-controls">
             <button class="qty-btn" onclick="decreaseQty('${item.id}')">−</button>
             <span class="cart-item-qty">${item.qty}</span>
@@ -866,8 +868,17 @@ function renderCart() {
           </div>
         </div>
         <div class="cart-item-price">$${(item.price * item.qty).toFixed(2)}</div>
-      </div>
-    `).join('');
+      `;
+
+      if (item.notes) {
+        const notesEl = document.createElement('div');
+        notesEl.className = 'cart-item-extra';
+        notesEl.textContent = `Notes: ${item.notes}`;
+        row.querySelector('.cart-item-info').insertBefore(notesEl, row.querySelector('.cart-item-controls'));
+      }
+
+      cartItemsEl.appendChild(row);
+    });
   }
   
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
