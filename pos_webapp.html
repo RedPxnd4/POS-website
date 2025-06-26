@@ -740,85 +740,79 @@ function groupBy(arr, key) {
 function renderMenu() {
   const grouped = groupBy(menuData, 'cat');
   const categories = Object.keys(grouped);
-  
-  // Clear existing content
-  menuSection.innerHTML = `
-    <div class="hero-section" id="home-hero">
-      <div class="hero-logo">Café Halal</div>
-      <p class="hero-tagline">Welcome to Café Halal – Fresh Middle Eastern Food Daily!</p>
-      <button id="view-menu" class="btn btn-primary">View Menu</button>
-    </div>
-    <div class="menu-header" id="menu-top">
-      <h1 class="menu-title">Menu</h1>
-      <p class="menu-subtitle">Select items to add to your order</p>
-    </div>
-  `;
-  
+
+  const params = new URLSearchParams(window.location.search);
+  const activeCat = params.get('cat');
+
   // Update navigation
   const navContent = nav.querySelector('.nav-content');
   navContent.innerHTML = '<div class="nav-section-title">Categories</div>';
-
-  document.getElementById('view-menu').onclick = () => {
-    document.getElementById('menu-top').scrollIntoView({ behavior: 'smooth' });
-  };
-  
-  categories.forEach((cat, idx) => {
-    // Create navigation link
+  categories.forEach(cat => {
     const link = document.createElement('a');
     link.textContent = cat;
-    link.href = `#cat-${idx}`;
+    link.href = `?cat=${encodeURIComponent(cat)}`;
     link.className = 'nav-link';
-    if (idx === 0) link.classList.add('active');
-    
+    if (cat === activeCat) link.classList.add('active');
     link.onclick = (e) => {
       e.preventDefault();
-      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-      link.classList.add('active');
-      document.getElementById(`cat-${idx}`).scrollIntoView({ behavior: 'smooth' });
+      window.location.href = `?cat=${encodeURIComponent(cat)}`;
     };
-    
     navContent.appendChild(link);
-    
-    // Create menu section
-    const section = document.createElement('div');
-    section.className = 'cat-section';
-    section.id = `cat-${idx}`;
-    
-    const title = document.createElement('div');
-    title.className = 'cat-title';
-    title.textContent = cat;
-    section.appendChild(title);
-    
-    const grid = document.createElement('div');
-    grid.className = 'items-grid';
-    
-    grouped[cat].forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'item-card';
-      card.innerHTML = `
-        <div class="item-content">
-          <div class="item-img">${item.emoji}</div>
-          <div class="item-info">
-            <div class="item-name">${item.name}</div>
-            <div class="item-description">${item.description}</div>
-            <div class="item-price">$${item.price.toFixed(2)}</div>
-          </div>
-        </div>
-      `;
-      
-      card.addEventListener('click', () => {
-        if (item.cat === 'Drinks') {
-          finalizeAddToCart(item);
-        } else {
-          openIngredientModal(item);
-        }
-      });
-      grid.appendChild(card);
-    });
-    
-    section.appendChild(grid);
-    menuSection.appendChild(section);
   });
+
+  // Home view when no category parameter
+  if (!activeCat) {
+    menuSection.innerHTML = `
+      <div class="hero-section" id="home-hero">
+        <div class="hero-logo">Café Halal</div>
+        <p class="hero-tagline">Welcome to Café Halal – Fresh Middle Eastern Food Daily!</p>
+        <button id="view-menu" class="btn btn-primary">View Menu</button>
+      </div>
+    `;
+    document.getElementById('view-menu').onclick = () => {
+      window.location.href = `?cat=${encodeURIComponent(categories[0])}`;
+    };
+    return;
+  }
+
+  // Determine category to show
+  const showCat = grouped[activeCat] ? activeCat : categories[0];
+
+  menuSection.innerHTML = `
+    <div class="menu-header" id="menu-top">
+      <h1 class="menu-title">${showCat}</h1>
+      <p class="menu-subtitle">Select items to add to your order</p>
+    </div>
+  `;
+
+  const grid = document.createElement('div');
+  grid.className = 'items-grid';
+
+  grouped[showCat].forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'item-card';
+    card.innerHTML = `
+      <div class="item-content">
+        <div class="item-img">${item.emoji}</div>
+        <div class="item-info">
+          <div class="item-name">${item.name}</div>
+          <div class="item-description">${item.description}</div>
+          <div class="item-price">$${item.price.toFixed(2)}</div>
+        </div>
+      </div>
+    `;
+
+    card.addEventListener('click', () => {
+      if (item.cat === 'Drinks') {
+        finalizeAddToCart(item);
+      } else {
+        openIngredientModal(item);
+      }
+    });
+    grid.appendChild(card);
+  });
+
+  menuSection.appendChild(grid);
 }
 
 function addToCart(item) {
