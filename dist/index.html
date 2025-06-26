@@ -864,9 +864,9 @@ function renderCart() {
           <div class="cart-item-name">${item.name}</div>
           ${item.ingredients && item.ingredients.length ? `<div class="cart-item-extra">${item.ingredients.join(', ')}</div>` : ''}
           <div class="cart-item-controls">
-            <button class="qty-btn" onclick="decreaseQty('${item.id}')">−</button>
+            <button class="qty-btn" onclick="decreaseQty(${item.id})">−</button>
             <span class="cart-item-qty">${item.qty}</span>
-            <button class="qty-btn" onclick="increaseQty('${item.id}')">+</button>
+            <button class="qty-btn" onclick="increaseQty(${item.id})">+</button>
           </div>
         </div>
         <div class="cart-item-price">$${(item.price * item.qty).toFixed(2)}</div>
