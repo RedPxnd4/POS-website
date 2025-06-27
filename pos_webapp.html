@@ -52,6 +52,7 @@
       display: flex;
       flex-direction: column;
       box-shadow: var(--shadow-sm);
+      transition: transform 0.3s ease;
     }
 
     .nav-header {
@@ -87,6 +88,7 @@
     .nav-link {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       padding: 0.75rem;
       border-radius: var(--radius);
       margin-bottom: 0.25rem;
@@ -109,11 +111,24 @@
       box-shadow: var(--shadow);
     }
 
-    .nav-link-icon {
-      width: 20px;
-      height: 20px;
-      margin-right: 0.75rem;
-      opacity: 0.7;
+    .nav-link-text {
+      flex: 1;
+    }
+
+    .nav-link-count {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.5rem;
+      border-radius: 12px;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    .nav-link:not(.active) .nav-link-count {
+      background: var(--border);
+      color: var(--text-muted);
     }
 
     /* ===== Main Menu Area ===== */
@@ -144,41 +159,30 @@
     .hero-section {
       text-align: center;
       margin-bottom: 2rem;
+      padding: 3rem 2rem;
+      background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--border-light) 100%);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
     }
 
     .hero-logo {
-      font-size: 2rem;
+      font-size: 2.5rem;
       font-weight: 700;
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.5rem;
       color: var(--primary);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .hero-tagline {
       color: var(--text-secondary);
-      margin-bottom: 1rem;
+      margin-bottom: 2rem;
       font-size: 1.1rem;
-    }
-
-    .cat-section {
-      margin-bottom: 3rem;
-    }
-
-    .cat-title {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .cat-title::before {
-      content: '';
-      width: 4px;
-      height: 24px;
-      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
-      border-radius: 2px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .items-grid {
@@ -214,12 +218,16 @@
     .item-card:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-lg);
-      position: relative;
       border-color: var(--accent);
     }
 
     .item-card:hover::before {
       transform: scaleX(1);
+    }
+
+    .item-card:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
     }
 
     .item-content {
@@ -274,6 +282,7 @@
       display: flex;
       flex-direction: column;
       box-shadow: var(--shadow-sm);
+      transition: transform 0.3s ease;
     }
 
     .cart-header {
@@ -301,6 +310,7 @@
       flex: 1;
       overflow-y: auto;
       margin-bottom: 1rem;
+      max-height: 400px;
     }
 
     .cart-empty {
@@ -322,12 +332,11 @@
     .cart-row {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
       padding: 0.75rem;
       border-radius: var(--radius);
       margin-bottom: 0.5rem;
       background: var(--border-light);
-      cursor: pointer;
       transition: all 0.15s ease;
       border: 1px solid transparent;
     }
@@ -340,6 +349,7 @@
 
     .cart-item-info {
       flex: 1;
+      margin-right: 1rem;
     }
 
     .cart-item-name {
@@ -348,26 +358,22 @@
       margin-bottom: 0.25rem;
     }
 
-    .cart-item-remove {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
     .cart-item-price {
       font-weight: 600;
       color: var(--accent);
+      white-space: nowrap;
     }
 
     .cart-item-controls {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      margin-top: 0.25rem;
+      margin-top: 0.5rem;
     }
 
     .qty-btn {
-      width: 24px;
-      height: 24px;
+      width: 28px;
+      height: 28px;
       background: var(--accent);
       color: #fff;
       border: none;
@@ -375,11 +381,26 @@
       cursor: pointer;
       font-weight: 600;
       line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .qty-btn:hover {
+      background: var(--accent-hover);
+      transform: scale(1.05);
+    }
+
+    .qty-btn:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
     }
 
     .cart-item-qty {
-      min-width: 20px;
+      min-width: 24px;
       text-align: center;
+      font-weight: 600;
     }
 
     .cart-summary {
@@ -422,55 +443,101 @@
       align-items: center;
       justify-content: center;
       z-index: 1000;
+      backdrop-filter: blur(4px);
     }
 
     .modal {
       background: var(--bg-secondary);
-      padding: 1.5rem;
+      padding: 2rem;
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-lg);
       position: relative;
       width: 90%;
-      max-width: 400px;
+      max-width: 450px;
+      max-height: 90vh;
+      overflow-y: auto;
     }
+
     .modal-close {
       position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
-      background: transparent;
+      top: 1rem;
+      right: 1rem;
+      background: var(--border-light);
       border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
       font-size: 1.25rem;
       cursor: pointer;
       color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
     }
 
+    .modal-close:hover {
+      background: var(--danger);
+      color: white;
+    }
 
     .modal-img {
-      font-size: 2rem;
+      font-size: 3rem;
       text-align: center;
-      margin-bottom: 0.5rem;
+      margin-bottom: 1rem;
     }
 
     .modal h3 {
-      margin-bottom: 1rem;
-      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      text-align: center;
+      color: var(--text-primary);
     }
 
     .modal-ingredients {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-ingredients label {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: var(--border-light);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .modal-ingredients label:hover {
+      background: var(--border);
+    }
+
+    .modal-ingredients input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
     }
 
     .modal-notes {
       width: 100%;
-      height: 60px;
-      margin-bottom: 1rem;
-      padding: 0.5rem;
+      height: 80px;
+      margin-bottom: 1.5rem;
+      padding: 0.75rem;
       border: 1px solid var(--border);
       border-radius: var(--radius);
       resize: vertical;
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+
+    .modal-notes:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-color: var(--accent);
     }
 
     .hidden {
@@ -480,13 +547,21 @@
     .cart-item-extra {
       font-size: 0.8rem;
       color: var(--text-secondary);
+      margin-bottom: 0.25rem;
     }
 
     .cart-inputs input {
-      padding: 0.5rem;
+      padding: 0.75rem;
       border: 1px solid var(--border);
       border-radius: var(--radius);
       font-size: 0.95rem;
+      transition: all 0.15s ease;
+    }
+
+    .cart-inputs input:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-color: var(--accent);
     }
 
     .btn {
@@ -499,6 +574,7 @@
       transition: all 0.15s ease;
       text-align: center;
       letter-spacing: 0.025em;
+      margin-bottom: 0.5rem;
     }
 
     .btn-primary {
@@ -510,7 +586,11 @@
     .btn-primary:hover:not(:disabled) {
       transform: translateY(-1px);
       box-shadow: var(--shadow-lg);
-      position: relative;
+    }
+
+    .btn-primary:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
     }
 
     .btn-primary:disabled {
@@ -518,6 +598,42 @@
       cursor: not-allowed;
       transform: none;
       box-shadow: var(--shadow-sm);
+    }
+
+    .btn-secondary {
+      background: var(--border-light);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border);
+      transform: translateY(-1px);
+    }
+
+    /* ===== Loading States ===== */
+    .loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .loading::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      margin: -10px 0 0 -10px;
+      border: 2px solid var(--accent);
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     /* ===== Mobile Header ===== */
@@ -535,12 +651,13 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0.5rem 1rem;
+        padding: 0.75rem 1rem;
         background: var(--primary);
         color: #fff;
         position: sticky;
         top: 0;
         z-index: 100;
+        box-shadow: var(--shadow);
       }
 
       #mobile-header button {
@@ -550,12 +667,33 @@
         padding: 0.5rem 0.75rem;
         border-radius: var(--radius);
         font-weight: 600;
+        transition: all 0.15s ease;
+      }
+
+      #mobile-header button:hover {
+        background: var(--accent-hover);
+      }
+
+      .mobile-title {
+        font-weight: 700;
+        font-size: 1.1rem;
       }
 
       #nav {
         width: 100%;
         height: auto;
         order: 2;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 200;
+        transform: translateX(-100%);
+      }
+
+      #nav.show {
+        transform: translateX(0);
       }
 
       #menu {
@@ -566,11 +704,39 @@
       #cart {
         width: 100%;
         order: 3;
-        max-height: 300px;
+        max-height: 50vh;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 150;
+        transform: translateY(100%);
+      }
+
+      #cart.show {
+        transform: translateY(0);
       }
 
       .items-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .item-card {
+        padding: 1rem;
+      }
+
+      .hero-section {
+        padding: 2rem 1rem;
+      }
+
+      .hero-logo {
+        font-size: 2rem;
+      }
+
+      .modal {
+        width: 95%;
+        padding: 1.5rem;
       }
     }
 
@@ -579,15 +745,51 @@
         display: none;
       }
     }
+
+    /* ===== Print Styles ===== */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      
+      .print-receipt, .print-receipt * {
+        visibility: visible;
+      }
+      
+      .print-receipt {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+    }
+
+    /* ===== Accessibility Improvements ===== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ===== Focus Visible ===== */
+    .nav-link:focus-visible,
+    .item-card:focus-visible,
+    .btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
   </style>
 </head>
 <body>
   <header id="mobile-header">
-    <button id="menu-toggle">☰ Menu</button>
+    <button id="menu-toggle" aria-label="Toggle menu">☰ Menu</button>
     <span class="mobile-title">Café POS</span>
-    <button id="cart-toggle">Cart (<span id="cart-count">0</span>)</button>
+    <button id="cart-toggle" aria-label="Toggle cart">Cart (<span id="cart-count">0</span>)</button>
   </header>
-  <nav id="nav">
+
+  <nav id="nav" role="navigation" aria-label="Menu categories">
     <div class="nav-header">
       <h1>Café POS</h1>
     </div>
@@ -596,14 +798,14 @@
     </div>
   </nav>
 
-  <section id="menu"></section>
+  <main id="menu" role="main"></main>
 
-  <section id="cart" class="hidden">
+  <aside id="cart" class="hidden" role="complementary" aria-label="Shopping cart">
     <div class="cart-header">
       <h2>Current Order</h2>
     </div>
     <div class="cart-content">
-      <div class="cart-items" id="cart-items">
+      <div class="cart-items" id="cart-items" role="list">
         <div class="cart-empty">
           <div class="cart-empty-icon">🛒</div>
           <p>No items in cart</p>
@@ -616,24 +818,44 @@
         </div>
         <div id="total-items" class="cart-total-items">Total Items: 0</div>
         <div class="cart-inputs">
-          <input id="cust-name" type="text" placeholder="Customer Name" />
-          <input id="cust-phone" type="tel" placeholder="Phone Number" />
+          <input id="cust-name" type="text" placeholder="Customer Name" aria-label="Customer Name" />
+          <input id="cust-phone" type="tel" placeholder="Phone Number" aria-label="Phone Number" />
         </div>
-        <button id="pay" class="btn btn-primary" disabled>Mark Ready & Print</button>
-        <button id="new-order" class="btn">Start New Order</button>
+        <button id="pay" class="btn btn-primary" disabled aria-describedby="total">Complete Order & Print</button>
+        <button id="new-order" class="btn btn-secondary">Start New Order</button>
       </div>
     </div>
-  </section>
+  </aside>
 
-  <div id="ingredient-overlay" class="modal-overlay hidden">
+  <div id="ingredient-overlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-item-name">
     <div class="modal" id="ingredient-modal">
-      <button id="modal-close" class="modal-close" aria-label="Close">&times;</button>
+      <button id="modal-close" class="modal-close" aria-label="Close customization modal">&times;</button>
       <h3 id="modal-item-name"></h3>
-      <div id="modal-item-img" class="modal-img"></div>
-      <div class="modal-ingredients" id="modal-ingredients"></div>
-      <textarea id="modal-notes" class="modal-notes" placeholder="Additional notes"></textarea>
+      <div id="modal-item-img" class="modal-img" aria-hidden="true"></div>
+      <fieldset class="modal-ingredients" id="modal-ingredients">
+        <legend class="sr-only">Select ingredients</legend>
+      </fieldset>
+      <label for="modal-notes" class="sr-only">Additional notes</label>
+      <textarea id="modal-notes" class="modal-notes" placeholder="Additional notes (optional)"></textarea>
       <button id="modal-add" class="btn btn-primary">Add to Cart</button>
     </div>
+  </div>
+
+  <!-- Screen reader only content -->
+  <div class="sr-only">
+    <style>
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+    </style>
   </div>
 
 <script>
@@ -644,87 +866,112 @@ const menuData = [
     name: "Hummus & Pita",
     price: 6.99,
     description: "Creamy hummus served with warm pita bread",
-    emoji: "🥙"
+    emoji: "🥙",
+    allergens: ["gluten"],
+    spicy: false
   },
   {
     cat: "Appetizers",
     name: "Falafel (6pc)",
     price: 5.99,
     description: "Crispy chickpea fritters with tahini sauce",
-    emoji: "🧆"
+    emoji: "🧆",
+    allergens: ["sesame"],
+    spicy: false
   },
   {
     cat: "Appetizers",
     name: "Stuffed Grape Leaves",
     price: 7.49,
     description: "Rice-stuffed grape leaves with herbs",
-    emoji: "🍃"
+    emoji: "🍃",
+    allergens: [],
+    spicy: false
   },
   {
     cat: "Platters",
     name: "Chicken over Rice",
     price: 11.99,
     description: "Grilled chicken over seasoned basmati rice",
-    emoji: "🍗"
+    emoji: "🍗",
+    allergens: [],
+    spicy: false
   },
   {
     cat: "Platters",
     name: "Gyro Mix Platter",
     price: 12.99,
     description: "Mixed lamb and chicken gyro with rice and salad",
-    emoji: "🥩"
+    emoji: "🥩",
+    allergens: ["dairy"],
+    spicy: false
   },
   {
     cat: "Platters",
     name: "Lamb Kabob Platter",
     price: 14.99,
     description: "Tender lamb kabobs with rice and grilled vegetables",
-    emoji: "🍖"
+    emoji: "🍖",
+    allergens: [],
+    spicy: true
   },
   {
     cat: "Wraps",
     name: "Lamb Gyro Wrap",
     price: 8.49,
     description: "Sliced lamb gyro in warm pita with vegetables",
-    emoji: "🌯"
+    emoji: "🌯",
+    allergens: ["gluten", "dairy"],
+    spicy: false
   },
   {
     cat: "Wraps",
     name: "Chicken Shawarma Wrap",
     price: 8.49,
     description: "Marinated chicken shawarma with garlic sauce",
-    emoji: "🌮"
+    emoji: "🌮",
+    allergens: ["gluten"],
+    spicy: true
   },
   {
     cat: "Wraps",
     name: "Falafel Wrap",
     price: 7.99,
     description: "Crispy falafel with fresh vegetables and tahini",
-    emoji: "🥙"
+    emoji: "🥙",
+    allergens: ["gluten", "sesame"],
+    spicy: false
   },
   {
     cat: "Drinks",
     name: "Mint Lemonade",
     price: 3.50,
     description: "Fresh mint lemonade with a hint of rose water",
-    emoji: "🍋"
+    emoji: "🍋",
+    allergens: [],
+    spicy: false
   },
   {
     cat: "Drinks",
     name: "Mango Lassi",
     price: 4.00,
     description: "Creamy yogurt drink blended with mango",
-    emoji: "🥭"
+    emoji: "🥭",
+    allergens: ["dairy"],
+    spicy: false
   },
   {
     cat: "Drinks",
     name: "Turkish Coffee",
     price: 3.25,
     description: "Traditional Turkish coffee served with delight",
-    emoji: "☕"
+    emoji: "☕",
+    allergens: [],
+    spicy: false
   }
 ];
 
+// ===== DOM Elements =====
 const nav = document.getElementById('nav');
 const menuSection = document.getElementById('menu');
 const cartItemsEl = document.getElementById('cart-items');
@@ -735,27 +982,64 @@ const cartEl = document.getElementById('cart');
 const menuToggle = document.getElementById('menu-toggle');
 const cartToggle = document.getElementById('cart-toggle');
 const cartCountEl = document.getElementById('cart-count');
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-if (window.innerWidth <= 768) {
-  nav.classList.add('hidden');
-  cartEl.classList.add('hidden');
+// ===== State Management =====
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+let isLoading = false;
+
+// ===== Mobile Navigation =====
+function initializeMobileNav() {
+  if (window.innerWidth <= 768) {
+    nav.classList.add('hidden');
+    cartEl.classList.add('hidden');
+  }
 }
 
 menuToggle?.addEventListener('click', () => {
   nav.classList.toggle('hidden');
+  nav.classList.toggle('show');
+  
+  // Close cart if open
+  if (cartEl.classList.contains('show')) {
+    cartEl.classList.remove('show');
+    cartEl.classList.add('hidden');
+  }
 });
 
 cartToggle?.addEventListener('click', () => {
   cartEl.classList.toggle('hidden');
+  cartEl.classList.toggle('show');
+  
+  // Close nav if open
+  if (nav.classList.contains('show')) {
+    nav.classList.remove('show');
+    nav.classList.add('hidden');
+  }
 });
 
-// Handle quantity button clicks
+// Close mobile menus when clicking outside
+document.addEventListener('click', (e) => {
+  if (window.innerWidth <= 768) {
+    if (!nav.contains(e.target) && !menuToggle.contains(e.target) && nav.classList.contains('show')) {
+      nav.classList.remove('show');
+      nav.classList.add('hidden');
+    }
+    if (!cartEl.contains(e.target) && !cartToggle.contains(e.target) && cartEl.classList.contains('show')) {
+      cartEl.classList.remove('show');
+      cartEl.classList.add('hidden');
+    }
+  }
+});
+
+// ===== Cart Event Delegation =====
 cartItemsEl.addEventListener('click', (e) => {
   const btn = e.target.closest('.qty-btn');
   if (!btn) return;
+  
+  e.preventDefault();
   const action = btn.dataset.action;
   const id = Number(btn.dataset.id);
+  
   if (action === 'inc') {
     increaseQty(id);
   } else if (action === 'dec') {
@@ -763,7 +1047,7 @@ cartItemsEl.addEventListener('click', (e) => {
   }
 });
 
-// Ingredient customization modal elements
+// ===== Modal Elements =====
 const overlay = document.getElementById('ingredient-overlay');
 const modal = document.getElementById('ingredient-modal');
 const modalName = document.getElementById('modal-item-name');
@@ -772,37 +1056,127 @@ const modalIngredientsEl = document.getElementById('modal-ingredients');
 const modalNotes = document.getElementById('modal-notes');
 const modalAddBtn = document.getElementById('modal-add');
 const modalCloseBtn = document.getElementById('modal-close');
-modalCloseBtn.addEventListener("click", closeIngredientModal);
-let modalItem = null;
 
+let modalItem = null;
 const ingredientOptions = ["Lettuce", "Tomato", "White Sauce", "Hot Sauce", "Onions"];
 
+// ===== Modal Functions =====
 function openIngredientModal(item) {
   modalItem = item;
   modalName.textContent = item.name;
   modalImg.textContent = item.emoji || '';
   modalNotes.value = '';
+  
   modalIngredientsEl.innerHTML = ingredientOptions
-    .map(ing => `<label><input type="checkbox" value="${ing}" checked> ${ing}</label>`)
-    .join('');
+    .map(ing => `
+      <label>
+        <input type="checkbox" value="${ing}" checked aria-describedby="ingredient-${ing}">
+        <span id="ingredient-${ing}">${ing}</span>
+      </label>
+    `).join('');
+  
   overlay.classList.remove('hidden');
+  modalCloseBtn.focus();
+  
+  // Trap focus in modal
+  trapFocus(modal);
 }
 
 function closeIngredientModal() {
   overlay.classList.add('hidden');
+  modalItem = null;
+  removeFocusTrap();
 }
 
+function trapFocus(element) {
+  const focusableElements = element.querySelectorAll(
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+  );
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+
+  element.addEventListener('keydown', (e) => {
+    if (e.key === 'Tab') {
+      if (e.shiftKey) {
+        if (document.activeElement === firstElement) {
+          lastElement.focus();
+          e.preventDefault();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          firstElement.focus();
+          e.preventDefault();
+        }
+      }
+    }
+    if (e.key === 'Escape') {
+      closeIngredientModal();
+    }
+  });
+}
+
+function removeFocusTrap() {
+  // Focus trap is removed when modal is closed
+}
+
+// ===== Modal Event Listeners =====
+modalCloseBtn.addEventListener("click", closeIngredientModal);
+
+modalAddBtn.onclick = () => {
+  const selected = Array.from(modalIngredientsEl.querySelectorAll('input[type="checkbox"]:checked'))
+    .map(cb => cb.value);
+  finalizeAddToCart(modalItem, selected, modalNotes.value.trim());
+  closeIngredientModal();
+};
+
+overlay.addEventListener('click', e => {
+  if (e.target === overlay) closeIngredientModal();
+});
+
+// ===== Cart Functions =====
 function finalizeAddToCart(item, ingredients = [], notes = '') {
-  const existing = cart.find(i => i.name === item.name && JSON.stringify(i.ingredients || []) === JSON.stringify(ingredients) && (i.notes || '') === notes);
+  const existing = cart.find(i => 
+    i.name === item.name && 
+    JSON.stringify(i.ingredients || []) === JSON.stringify(ingredients) && 
+    (i.notes || '') === notes
+  );
+  
   if (existing) {
     existing.qty += 1;
   } else {
-    cart.push({ ...item, ingredients, notes, id: Date.now() + Math.random(), qty: 1 });
+    cart.push({ 
+      ...item, 
+      ingredients, 
+      notes, 
+      id: Date.now() + Math.random(), 
+      qty: 1 
+    });
   }
+  
   renderCart();
+  showNotification(`${item.name} added to cart`);
 }
 
-// Group data by category
+function increaseQty(id) {
+  const item = cart.find(i => i.id === id);
+  if (item) {
+    item.qty += 1;
+    renderCart();
+  }
+}
+
+function decreaseQty(id) {
+  const item = cart.find(i => i.id === id);
+  if (item) {
+    item.qty -= 1;
+    if (item.qty <= 0) {
+      cart = cart.filter(i => i.id !== id);
+    }
+    renderCart();
+  }
+}
+
+// ===== Utility Functions =====
 function groupBy(arr, key) {
   return arr.reduce((acc, obj) => {
     const group = obj[key];
@@ -812,34 +1186,68 @@ function groupBy(arr, key) {
   }, {});
 }
 
-// Render navigation and menu
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+function showNotification(message) {
+  // Simple notification - could be enhanced with a toast library
+  console.log(`Notification: ${message}`);
+}
+
+// ===== Render Functions =====
 function renderMenu() {
   const grouped = groupBy(menuData, 'cat');
   const categories = Object.keys(grouped);
 
   const params = new URLSearchParams(window.location.search);
   const activeCat = params.get('cat');
-  const showCat = grouped[activeCat] ? activeCat : categories[0];
+  const showCat = grouped[activeCat] ? activeCat : null;
 
-  // Update navigation
+  // Update navigation with item counts
   const navContent = nav.querySelector('.nav-content');
   navContent.innerHTML = '<div class="nav-section-title">Categories</div>';
+  
   categories.forEach(cat => {
+    const itemCount = grouped[cat].length;
     const link = document.createElement('a');
-    link.textContent = cat;
     link.href = `?cat=${encodeURIComponent(cat)}`;
     link.className = 'nav-link';
+    link.setAttribute('role', 'button');
+    link.setAttribute('aria-pressed', cat === showCat ? 'true' : 'false');
+    
     if (cat === showCat) link.classList.add('active');
+
+    link.innerHTML = `
+      <span class="nav-link-text">${cat}</span>
+      <span class="nav-link-count">${itemCount}</span>
+    `;
 
     link.onclick = (e) => {
       e.preventDefault();
-      window.location.href = `?cat=${encodeURIComponent(cat)}`;
+      updateURL(`?cat=${encodeURIComponent(cat)}`);
+      renderMenu();
+      
+      // Close mobile nav after selection
+      if (window.innerWidth <= 768) {
+        nav.classList.remove('show');
+        nav.classList.add('hidden');
+      }
     };
+    
     navContent.appendChild(link);
   });
 
   // Home view when no category parameter
-  if (!activeCat) {
+  if (!showCat) {
     menuSection.innerHTML = `
       <div class="hero-section" id="home-hero">
         <div class="hero-logo">Café Halal</div>
@@ -847,13 +1255,15 @@ function renderMenu() {
         <button id="view-menu" class="btn btn-primary">View Menu</button>
       </div>
     `;
+    
     document.getElementById('view-menu').onclick = () => {
-      window.location.href = `?cat=${encodeURIComponent(categories[0])}`;
+      updateURL(`?cat=${encodeURIComponent(categories[0])}`);
+      renderMenu();
     };
     return;
   }
 
-  // Determine category to show
+  // Render category menu
   menuSection.innerHTML = `
     <div class="menu-header" id="menu-top">
       <h1 class="menu-title">${showCat}</h1>
@@ -863,136 +1273,307 @@ function renderMenu() {
 
   const grid = document.createElement('div');
   grid.className = 'items-grid';
+  grid.setAttribute('role', 'grid');
 
-  grouped[showCat].forEach(item => {
+  grouped[showCat].forEach((item, index) => {
     const card = document.createElement('div');
     card.className = 'item-card';
+    card.setAttribute('role', 'gridcell');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', `${item.name}, $${item.price.toFixed(2)}, ${item.description}`);
+    
     card.innerHTML = `
       <div class="item-content">
-        <div class="item-img">${item.emoji}</div>
+        <div class="item-img" aria-hidden="true">${item.emoji}</div>
         <div class="item-info">
-          <div class="item-name">${item.name}</div>
+          <div class="item-name">${item.name} ${item.spicy ? '🌶️' : ''}</div>
           <div class="item-description">${item.description}</div>
           <div class="item-price">$${item.price.toFixed(2)}</div>
         </div>
       </div>
     `;
 
-    card.addEventListener('click', () => {
+    const handleItemClick = () => {
+      if (isLoading) return;
+      
       if (item.cat === 'Drinks') {
         finalizeAddToCart(item);
       } else {
         openIngredientModal(item);
       }
+    };
+
+    card.addEventListener('click', handleItemClick);
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handleItemClick();
+      }
     });
+    
     grid.appendChild(card);
   });
 
   menuSection.appendChild(grid);
 }
 
-function addToCart(item) {
-  finalizeAddToCart(item);
-}
-
-function increaseQty(id) {
-  const it = cart.find(i => i.id === id);
-  if (it) {
-    it.qty += 1;
-    renderCart();
-  }
-}
-
-function decreaseQty(id) {
-  const it = cart.find(i => i.id === id);
-  if (it) {
-    it.qty -= 1;
-    if (it.qty <= 0) {
-      cart = cart.filter(i => i.id !== id);
-    }
-    renderCart();
-  }
-}
-
 function renderCart() {
-  if (cart.length === 0) {
-    cartEl.classList.add('hidden');
-    cartItemsEl.innerHTML = `
-      <div class="cart-empty">
-        <div class="cart-empty-icon">🛒</div>
-        <p>No items in cart</p>
-      </div>
-    `;
-  } else {
-    cartEl.classList.remove('hidden');
-    cartItemsEl.innerHTML = '';
-    cart.forEach(item => {
-      const row = document.createElement('div');
-      row.className = 'cart-row';
-      row.innerHTML = `
-        <div class="cart-item-info">
-          <div class="cart-item-name">${item.name}</div>
-          ${item.ingredients && item.ingredients.length ? `<div class="cart-item-extra">${item.ingredients.join(', ')}</div>` : ''}
-          <div class="cart-item-controls">
-            <button class="qty-btn" data-action="dec" data-id="${item.id}">−</button>
-            <span class="cart-item-qty">${item.qty}</span>
-            <button class="qty-btn" data-action="inc" data-id="${item.id}">+</button>
-          </div>
-        </div>
-        <div class="cart-item-price">$${(item.price * item.qty).toFixed(2)}</div>
-      `;
-
-      if (item.notes) {
-        const notesEl = document.createElement('div');
-        notesEl.className = 'cart-item-extra';
-        notesEl.textContent = `Notes: ${item.notes}`;
-        row.querySelector('.cart-item-info').insertBefore(notesEl, row.querySelector('.cart-item-controls'));
+  const debouncedRender = debounce(() => {
+    if (cart.length === 0) {
+      if (window.innerWidth > 768) {
+        cartEl.classList.add('hidden');
       }
+      cartItemsEl.innerHTML = `
+        <div class="cart-empty">
+          <div class="cart-empty-icon">🛒</div>
+          <p>No items in cart</p>
+        </div>
+      `;
+    } else {
+      if (window.innerWidth > 768) {
+        cartEl.classList.remove('hidden');
+      }
+      
+      cartItemsEl.innerHTML = '';
+      cart.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'cart-row';
+        row.setAttribute('role', 'listitem');
+        
+        row.innerHTML = `
+          <div class="cart-item-info">
+            <div class="cart-item-name">${item.name}</div>
+            ${item.ingredients && item.ingredients.length ? 
+              `<div class="cart-item-extra">With: ${item.ingredients.join(', ')}</div>` : ''}
+            ${item.notes ? 
+              `<div class="cart-item-extra">Notes: ${item.notes}</div>` : ''}
+            <div class="cart-item-controls">
+              <button class="qty-btn" data-action="dec" data-id="${item.id}" aria-label="Decrease quantity">−</button>
+              <span class="cart-item-qty" aria-label="Quantity">${item.qty}</span>
+              <button class="qty-btn" data-action="inc" data-id="${item.id}" aria-label="Increase quantity">+</button>
+            </div>
+          </div>
+          <div class="cart-item-price">$${(item.price * item.qty).toFixed(2)}</div>
+        `;
 
-      cartItemsEl.appendChild(row);
-    });
-  }
+        cartItemsEl.appendChild(row);
+      });
+    }
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
-  totalEl.textContent = `$${total.toFixed(2)}`;
-  document.getElementById('total-items').textContent = `Total Items: ${totalItems}`;
-  if (cartCountEl) cartCountEl.textContent = totalItems;
-  payBtn.disabled = totalItems === 0;
-  localStorage.setItem('cart', JSON.stringify(cart));
+    const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+    const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+    
+    totalEl.textContent = `$${total.toFixed(2)}`;
+    document.getElementById('total-items').textContent = `Total Items: ${totalItems}`;
+    if (cartCountEl) cartCountEl.textContent = totalItems;
+    
+    payBtn.disabled = totalItems === 0;
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, 100);
+
+  debouncedRender();
 }
 
-payBtn.onclick = () => {
-  if (cart.length > 0) {
-    // console.log('Printing order:', cart);
+// ===== Order Management =====
+payBtn.onclick = async () => {
+  if (cart.length === 0) return;
+  
+  const customerName = document.getElementById('cust-name').value.trim();
+  const customerPhone = document.getElementById('cust-phone').value.trim();
+  
+  if (!customerName) {
+    alert('Please enter customer name');
+    document.getElementById('cust-name').focus();
+    return;
+  }
+  
+  isLoading = true;
+  payBtn.classList.add('loading');
+  payBtn.textContent = 'Processing...';
+  
+  try {
+    // Simulate order processing
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Create print receipt
+    createPrintReceipt(cart, customerName, customerPhone);
+    
+    // Print
     window.print();
+    
+    // Clear cart
     cart = [];
+    document.getElementById('cust-name').value = '';
+    document.getElementById('cust-phone').value = '';
+    
     renderCart();
+    showNotification('Order completed successfully!');
+    
+  } catch (error) {
+    console.error('Order processing failed:', error);
+    alert('Order processing failed. Please try again.');
+  } finally {
+    isLoading = false;
+    payBtn.classList.remove('loading');
+    payBtn.textContent = 'Complete Order & Print';
   }
 };
 
 newOrderBtn?.addEventListener('click', () => {
+  if (cart.length > 0 && !confirm('Are you sure you want to start a new order? Current items will be lost.')) {
+    return;
+  }
+  
   localStorage.removeItem('cart');
   cart = [];
-  cartEl.classList.add('hidden');
+  document.getElementById('cust-name').value = '';
+  document.getElementById('cust-phone').value = '';
+  
+  if (window.innerWidth <= 768) {
+    cartEl.classList.remove('show');
+    cartEl.classList.add('hidden');
+  }
+  
   renderCart();
+  showNotification('New order started');
 });
 
-modalAddBtn.onclick = () => {
-  const selected = Array.from(modalIngredientsEl.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
-  finalizeAddToCart(modalItem, selected, modalNotes.value.trim());
-  closeIngredientModal();
-};
+// ===== Print Receipt =====
+function createPrintReceipt(cartItems, customerName, customerPhone) {
+  const existingReceipt = document.querySelector('.print-receipt');
+  if (existingReceipt) {
+    existingReceipt.remove();
+  }
+  
+  const total = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const totalItems = cartItems.reduce((sum, item) => sum + item.qty, 0);
+  
+  const receipt = document.createElement('div');
+  receipt.className = 'print-receipt';
+  receipt.innerHTML = `
+    <div style="font-family: monospace; max-width: 300px; margin: 0 auto; padding: 20px;">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h2>Café Halal</h2>
+        <p>Fresh Middle Eastern Food</p>
+        <p>Order #${Date.now().toString().slice(-6)}</p>
+        <p>${new Date().toLocaleString()}</p>
+      </div>
+      
+      <div style="margin-bottom: 20px;">
+        <p><strong>Customer:</strong> ${customerName}</p>
+        ${customerPhone ? `<p><strong>Phone:</strong> ${customerPhone}</p>` : ''}
+      </div>
+      
+      <div style="border-top: 1px dashed #000; padding-top: 10px; margin-bottom: 10px;">
+        ${cartItems.map(item => `
+          <div style="margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between;">
+              <span>${item.name} x${item.qty}</span>
+              <span>$${(item.price * item.qty).toFixed(2)}</span>
+            </div>
+            ${item.ingredients && item.ingredients.length ? 
+              `<div style="font-size: 0.8em; color: #666;">With: ${item.ingredients.join(', ')}</div>` : ''}
+            ${item.notes ? 
+              `<div style="font-size: 0.8em; color: #666;">Notes: ${item.notes}</div>` : ''}
+          </div>
+        `).join('')}
+      </div>
+      
+      <div style="border-top: 1px dashed #000; padding-top: 10px;">
+        <div style="display: flex; justify-content: space-between; font-weight: bold;">
+          <span>Total Items: ${totalItems}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.2em;">
+          <span>TOTAL:</span>
+          <span>$${total.toFixed(2)}</span>
+        </div>
+      </div>
+      
+      <div style="text-align: center; margin-top: 20px; font-size: 0.9em;">
+        <p>Thank you for your order!</p>
+        <p>Please wait for your name to be called</p>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(receipt);
+}
 
-overlay.addEventListener('click', e => {
-  if (e.target === overlay) closeIngredientModal();
+// ===== URL Management =====
+function updateURL(newURL) {
+  window.history.pushState({}, '', newURL);
+}
+
+// Handle browser back/forward
+window.addEventListener('popstate', () => {
+  renderMenu();
 });
 
-// Initialize the application
-renderMenu();
-localStorage.removeItem('cart');
-cart = [];
-renderCart();
+// ===== Keyboard Navigation =====
+document.addEventListener('keydown', (e) => {
+  // Global keyboard shortcuts
+  if (e.ctrlKey || e.metaKey) {
+    switch(e.key) {
+      case 'n':
+        e.preventDefault();
+        newOrderBtn?.click();
+        break;
+      case 'p':
+        e.preventDefault();
+        if (!payBtn.disabled) payBtn.click();
+        break;
+    }
+  }
+  
+  // Escape key handling
+  if (e.key === 'Escape') {
+    if (!overlay.classList.contains('hidden')) {
+      closeIngredientModal();
+    } else if (window.innerWidth <= 768) {
+      if (nav.classList.contains('show')) {
+        nav.classList.remove('show');
+        nav.classList.add('hidden');
+      }
+      if (cartEl.classList.contains('show')) {
+        cartEl.classList.remove('show');
+        cartEl.classList.add('hidden');
+      }
+    }
+  }
+});
+
+// ===== Responsive Handling =====
+window.addEventListener('resize', debounce(() => {
+  initializeMobileNav();
+}, 250));
+
+// ===== Error Handling =====
+window.addEventListener('error', (e) => {
+  console.error('Application error:', e.error);
+  showNotification('An error occurred. Please refresh the page.');
+});
+
+// ===== Initialize Application =====
+function initializeApp() {
+  try {
+    initializeMobileNav();
+    renderMenu();
+    renderCart();
+    
+    // Focus management for accessibility
+    if (document.activeElement === document.body) {
+      const firstFocusable = document.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      firstFocusable?.focus();
+    }
+    
+  } catch (error) {
+    console.error('Failed to initialize app:', error);
+    document.body.innerHTML = '<div style="text-align: center; padding: 2rem;"><h1>Error loading application</h1><p>Please refresh the page.</p></div>';
+  }
+}
+
+// Start the application
+initializeApp();
 </script>
 </body>
 </html>
