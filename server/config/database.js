@@ -3,8 +3,21 @@ const { createClient } = require('@supabase/supabase-js');
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+// Validate environment variables
 if (!supabaseUrl || !supabaseServiceKey) {
+  console.error('Missing Supabase configuration:');
+  console.error('SUPABASE_URL:', supabaseUrl ? 'Set' : 'Missing');
+  console.error('SUPABASE_SERVICE_ROLE_KEY:', supabaseServiceKey ? 'Set' : 'Missing');
   throw new Error('Missing Supabase configuration. Please check your environment variables.');
+}
+
+// Validate URL format
+try {
+  new URL(supabaseUrl);
+} catch (error) {
+  console.error('Invalid SUPABASE_URL format:', supabaseUrl);
+  console.error('Expected format: https://your-project-id.supabase.co');
+  throw new Error('Invalid SUPABASE_URL format. Please provide a valid URL.');
 }
 
 // Create Supabase client with service role key for server-side operations
