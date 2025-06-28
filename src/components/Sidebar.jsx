@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import {
   HomeIcon,
   ShoppingCartIcon,
-  MenuIcon,
+  Bars3Icon,
   UsersIcon,
   CubeIcon,
   ChartBarIcon,
@@ -19,7 +19,7 @@ const Sidebar = ({ isOpen, onClose }) => {
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, roles: ['staff', 'manager', 'admin'] },
     { name: 'Orders', href: '/orders', icon: ShoppingCartIcon, roles: ['staff', 'manager', 'admin'] },
-    { name: 'Menu', href: '/menu', icon: MenuIcon, roles: ['manager', 'admin'] },
+    { name: 'Menu', href: '/menu', icon: Bars3Icon, roles: ['manager', 'admin'] },
     { name: 'Customers', href: '/customers', icon: UsersIcon, roles: ['staff', 'manager', 'admin'] },
     { name: 'Inventory', href: '/inventory', icon: CubeIcon, roles: ['manager', 'admin'] },
     { name: 'Reports', href: '/reports', icon: ChartBarIcon, roles: ['manager', 'admin'] },
