@@ -7,7 +7,7 @@ import {
   ShoppingCartIcon,
   UsersIcon,
   ExclamationTriangleIcon,
-  TrendingUpIcon,
+  ArrowTrendingUpIcon,
   ClockIcon
 } from '@heroicons/react/24/outline';
 
@@ -122,7 +122,7 @@ const Dashboard = () => {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="p-2 bg-yellow-100 rounded-lg">
-                <TrendingUpIcon className="w-6 h-6 text-yellow-600" />
+                <ArrowTrendingUpIcon className="w-6 h-6 text-yellow-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Avg Order Value</p>
@@ -267,7 +267,7 @@ const Dashboard = () => {
                 href="/reports"
                 className="flex flex-col items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
               >
-                <TrendingUpIcon className="w-8 h-8 text-purple-600 mb-2" />
+                <ArrowTrendingUpIcon className="w-8 h-8 text-purple-600 mb-2" />
                 <span className="text-sm font-medium text-purple-900">Reports</span>
               </a>
             </>

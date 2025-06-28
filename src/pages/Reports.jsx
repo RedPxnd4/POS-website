@@ -6,7 +6,7 @@ import {
   CurrencyDollarIcon,
   ShoppingCartIcon,
   UsersIcon,
-  TrendingUpIcon,
+  ArrowTrendingUpIcon,
   CalendarIcon,
   ChartBarIcon
 } from '@heroicons/react/24/outline';
@@ -97,7 +97,7 @@ const Reports = () => {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="p-2 bg-yellow-100 rounded-lg">
-                <TrendingUpIcon className="w-6 h-6 text-yellow-600" />
+                <ArrowTrendingUpIcon className="w-6 h-6 text-yellow-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Avg Order Value</p>
@@ -231,7 +231,7 @@ const Reports = () => {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="p-2 bg-yellow-100 rounded-lg">
-                <TrendingUpIcon className="w-6 h-6 text-yellow-600" />
+                <ArrowTrendingUpIcon className="w-6 h-6 text-yellow-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Low Stock</p>
@@ -245,7 +245,7 @@ const Reports = () => {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="p-2 bg-red-100 rounded-lg">
-                <TrendingUpIcon className="w-6 h-6 text-red-600" />
+                <ArrowTrendingUpIcon className="w-6 h-6 text-red-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Out of Stock</p>
@@ -332,7 +332,7 @@ const Reports = () => {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="p-2 bg-green-100 rounded-lg">
-                <TrendingUpIcon className="w-6 h-6 text-green-600" />
+                <ArrowTrendingUpIcon className="w-6 h-6 text-green-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Active Customers</p>
@@ -360,7 +360,7 @@ const Reports = () => {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="p-2 bg-purple-100 rounded-lg">
-                <TrendingUpIcon className="w-6 h-6 text-purple-600" />
+                <ArrowTrendingUpIcon className="w-6 h-6 text-purple-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Period</p>
