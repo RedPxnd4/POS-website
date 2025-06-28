@@ -66,6 +66,19 @@ app.use(morgan('combined', {
   }
 }));
 
+// Root route for development mode
+if (process.env.NODE_ENV !== 'production') {
+  app.get('/', (req, res) => {
+    res.status(200).json({
+      message: 'POS System API is running',
+      status: 'OK',
+      environment: process.env.NODE_ENV || 'development',
+      frontend_url: process.env.FRONTEND_URL || 'http://localhost:5173',
+      api_docs: 'API endpoints available at /api/*'
+    });
+  });
+}
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({
