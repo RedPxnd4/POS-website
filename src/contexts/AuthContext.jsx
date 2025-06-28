@@ -173,7 +173,9 @@ export const AuthProvider = ({ children }) => {
 
   const updateProfile = async (profileData) => {
     try {
-      const response = await authAPI.updateProfile(state.user.id, profileData);
+      const response = await authAPI.updateProfile ? 
+        await authAPI.updateProfile(state.user.id, profileData) :
+        await usersAPI.update(state.user.id, profileData);
       dispatch({
         type: 'UPDATE_USER',
         payload: response.data.user
